@@ -1,0 +1,42 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+**/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+
+# IDE - VSCode
+.chrome
+
+# misc
+/connect.lock
+/coverage
+/typings
+.pnpm-debug.log
+pnpm-debug.log
+lerna-debug.log
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Distribution folders
+dist
+
+# Tests Report & Coverage
+**/coverage
+**/.jest-cache
+**/jest-coverage
+
+# Environment variables
+.env
+
+# tarball
+**/*.tgz
+
+__test__
