@@ -17,13 +17,14 @@
   "dependencies": {
     "chalk": "^5.0.1",
     "consola": "^2.15.3",
-    "execa": "^6.1.0",
+    "conventional-changelog-cli": "^2.2.2",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
     "inquirer": "^8.2.4",
     "jsonfile": "^6.1.0",
     "p-series": "^3.0.0",
     "semver": "^7.3.7",
+    "shelljs": "^0.8.5",
     "yargs": "^17.5.1"
   }
 }

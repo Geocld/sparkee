@@ -1,6 +1,7 @@
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 import init from './core/init'
+import publish from './core/publish'
 
 yargs(hideBin(process.argv))
   .usage('Usage: $0 <command> [options]')
@@ -11,7 +12,7 @@ yargs(hideBin(process.argv))
     console.log('info')
   })
   .command('publish', 'Publish packages in the current project.', () => {}, (argv) => {
-    console.log('publish')
+    publish()
   })
   .demandCommand(1, 'A command is required. Pass --help to see all available commands and options.')
   .strict()
