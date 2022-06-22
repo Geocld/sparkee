@@ -66,7 +66,7 @@ export function step(msg: string) {
   consola.log(chalk.cyan(msg))
 }
 
-export async function getChangedPackages(): Promise<any[]> {
+export async function getChangedPackages(force: boolean = false): Promise<any[]> {
   let lastTag
 
   const { stdout: tag, stderr } = await exec('git describe --tags --abbrev=0')
@@ -90,7 +90,7 @@ export async function getChangedPackages(): Promise<any[]> {
     folders.map(async (folder) => {
       const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
       const { stdout: hasChanges } = await exec(`git diff ${lastTag} -- ${join(folder, 'src')} ${join(folder, 'package.json')}`)
-      if (hasChanges) {
+      if (force || hasChanges) { // force mode return all packages
         return {
           path: folder,
           name: pkg.name,

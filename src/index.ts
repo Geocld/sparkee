@@ -11,8 +11,11 @@ yargs(hideBin(process.argv))
   .command('info', 'Prints information about the monorepo.', () => {}, (argv) => {
     console.log('info')
   })
-  .command('publish', 'Publish packages in the current project.', () => {}, (argv) => {
-    publish()
+  .command('publish', 'Publish packages in the current project.', (args) => {
+    args.option('force', { demand: false }).alias('f', 'force')
+  }, (argv) => {
+    const force = argv.force as boolean
+    publish(force)
   })
   .demandCommand(1, 'A command is required. Pass --help to see all available commands and options.')
   .strict()

@@ -6,10 +6,10 @@ import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../com
 import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions } from '../utils'
 
 // publish package, you can publish all or publish single package.
-async function publish() {
+async function publish(force: boolean = false) {
   console.log('publish')
   
-  const changedPackages = await getChangedPackages()
+  const changedPackages = await getChangedPackages(force)
   if (!changedPackages.length) {
     consola.warn('No packages have changed since last release')
     exit()
