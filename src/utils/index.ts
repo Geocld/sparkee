@@ -3,6 +3,7 @@ import fs from 'fs-extra'
 import glob from 'glob'
 import shell from 'shelljs'
 import consola from 'consola'
+import chalk from 'chalk'
 import jsonfile from 'jsonfile'
 import { ROOT, PACKAGES, SPARK_JSON } from '../common/constans'
 
@@ -57,8 +58,8 @@ export async function getPkgsProperty(property: string): Promise<any[]> {
   return properties.filter(p => p)
 }
 
-export function exec(cmd: string): Promise<{ stdout: string, stderr: string, code: number }> {
-  return shell.exec(cmd, { silent: true })
+export function exec(cmd: string, silent: boolean = true): Promise<{ stdout: string, stderr: string, code: number }> {
+  return shell.exec(cmd, { silent })
 }
 
 export async function getChangedPackages(): Promise<any[]> {
@@ -97,4 +98,37 @@ export async function getChangedPackages(): Promise<any[]> {
   )
   
   return pkgs.filter(p => p)
+}
+
+type Package= {
+  name: string,
+  path: string,
+  version: string,
+  pkg: any
+}
+
+export async function updateVersions(packageList: Package[]): Promise<any> {
+  return Promise.all(
+    packageList.map(({ pkg, version, path }) => {
+      pkg.version = version
+      const content = JSON.stringify(pkg, null, 2) + '\n'
+      return fs.writeFile(join(path, 'package.json'), content)
+    })
+  )
+}
+
+export async function runTaskSync(tasks: Function[]): Promise<any[]> {
+  for (const task of tasks) {
+		if (typeof task !== 'function') {
+			throw new TypeError(`Expected task to be a \`Function\`, received \`${typeof task}\``)
+		}
+	}
+
+	const results:Function[] = []
+
+	for (const task of tasks) {
+		results.push(await task()) // eslint-disable-line no-await-in-loop
+	}
+
+	return results
 }
