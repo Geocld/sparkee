@@ -62,6 +62,10 @@ export function exec(cmd: string, silent: boolean = true): Promise<{ stdout: str
   return shell.exec(cmd, { silent })
 }
 
+export function step(msg: string) {
+  consola.log(chalk.cyan(msg))
+}
+
 export async function getChangedPackages(): Promise<any[]> {
   let lastTag
 

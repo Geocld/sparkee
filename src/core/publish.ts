@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import semver from 'semver'
 import live from 'shelljs-live'
 import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
-import { exec, exit, getChangedPackages, runTaskSync, updateVersions } from '../utils'
+import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions } from '../utils'
 
 // publish package, you can publish all or publish single package.
 async function publish() {
@@ -87,10 +87,10 @@ async function publish() {
     exit()
   }
 
-  consola.log('\nUpdating versions in package.json files...')
+  step('\nUpdating versions in package.json files...')
   await updateVersions(pkgWithVersions)
 
-  consola.log('\nGenerating changelogs...')
+  step('\nGenerating changelogs...')
   let filter = ''
   for (const pkg of pkgWithVersions) {
     const { name, path } = pkg
@@ -99,14 +99,62 @@ async function publish() {
     await exec(`npx conventional-changelog -p angular --commit-path ${path} -l ${name} -o ${path}/CHANGELOG.md`)
   }
 
-  consola.log('\nBuilding all packages...')
-  live(`pnpm${filter} build`)
-  // const { stdout: buildStatus } = await exec(`pnpm${filter} build`, false)
+  step('\nBuilding all packages...')
+  live(`pnpm${filter} build`) // use live to preserve colors of stdout
 
-  consola.log('\nCommitting changes...')
+  const { stdout: hasChanges } = await exec('git diff')
+  if (hasChanges) {
+    step('\nCommitting changes...')
+    live([
+      'git',
+      'add',
+      'packages/*/CHANGELOG.md',
+      'packages/*/package.json'
+    ])
+    const commitCode = live([
+      'git',
+      'commit',
+      '-m',
+      `release: ${pkgWithVersions
+        .map(({ name, version }) => `${name}@${version}`)
+        .join(' ')}`
+    ])
+    if (commitCode !== 0) {
+      exit()
+    }
+  } else {
+    consola.warn(chalk.yellow('No changes to commit.'))
+  }
 
-  // pnpm publish
-  // exec(`pnpm --filter ${choice}` publish)
+  step('\nCreating tags...')
+  let versionsToPush: string[] = []
+  for (const pkg of pkgWithVersions) {
+    const { name, version } = pkg
+    versionsToPush.push(`refs/tags/${name}@${version}`)
+    const tagCode = live([
+      'git',
+      'tag',
+      `${name}@${version}`
+    ])
+    if (tagCode !== 0) {
+      exit()
+    }
+  }
+
+  step('\nPushing to Git...')
+  const pushCode = live([
+    'git',
+    'push',
+    'origin',
+    ...versionsToPush
+  ])
+
+  if (pushCode !== 0) {
+    exit()
+  }
+
+  step('\Publishing packages...')
+  live(`pnpm${filter} publish`)
 }
 
 export default publish
