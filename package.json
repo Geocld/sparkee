@@ -1,7 +1,8 @@
 {
   "name": "spark",
   "version": "1.0.0",
-  "description": "",
+  "description": "A publish tool for monorepo,just like lerna but support pnpm.",
+  "author": "lijiahao <lijiahao5372@gmail.com>",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsc -w",
@@ -11,9 +12,11 @@
     "spark": "dist/index.js",
     "spk": "dist/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "monorepo",
+    "pnpm"
+  ],
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^17.0.43",
     "@types/yargs": "^17.0.10"
