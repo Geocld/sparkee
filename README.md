@@ -103,12 +103,12 @@ Or Print detail dependencies tree of packages:
 ```bash
 $ spark info --tree
 
-@cmschina/pkg1@1.0.0
-╰── @cmschina/pkg2@1.0.0
+@geocld/pkg1@1.0.0
+╰── @geocld/pkg2@1.0.0
 
 ----------
 
-@cmschina/pkg2@1.0.0
+@geocld/pkg2@1.0.0
 ``` 
 
 #### publish
