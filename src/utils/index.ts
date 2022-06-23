@@ -72,7 +72,7 @@ export async function getChangedPackages(force: boolean = false): Promise<any[]>
   const { stdout: tag, stderr } = await exec('git describe --tags --abbrev=0')
 
   if (stderr) {
-    consola.warn(`Couldn't get the last tag, using first commit...`)
+    !force && consola.warn(`Couldn't get the last tag, using first commit...`)
     const { stdout, stderr } = await exec('git rev-list --max-parents=0 HEAD')
     lastTag = formatStdout(stdout)
   } else {

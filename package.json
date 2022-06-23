@@ -7,6 +7,10 @@
     "dev": "tsc -w",
     "build": "tsc"
   },
+  "bin": {
+    "spark": "dist/index.js",
+    "spk": "dist/index.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
