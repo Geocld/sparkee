@@ -8,7 +8,7 @@ import jsonfile from 'jsonfile'
 import { ROOT, PACKAGES, SPARK_JSON } from '../common/constans'
 
 async function getFolders(packages: string[] | string = '*'): Promise<string[]> {
-  let folders = await glob.sync(join(ROOT, 'packages/*'))
+  let folders = await glob.sync('packages/*')
   if (packages === '*') {
     return folders
   }

@@ -1,13 +1,43 @@
+import fs from 'fs'
 import consola from 'consola'
 import chalk from 'chalk'
 import semver from 'semver'
 import live from 'shelljs-live'
+import conventionalChangelog from 'conventional-changelog'
 import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
 import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions } from '../utils'
+import { rejects } from 'assert'
 
 // publish package, you can publish all or publish single package.
+
+function generateChangeLog(pkg) {
+  const { name, path } = pkg
+  return new Promise((resolve, reject) => {
+    const changelogStream = conventionalChangelog(
+      {
+        preset: 'angular',
+        pkg: { path: undefined },
+        lernaPackage: name
+      },
+      undefined,
+      { // commit-path
+        path
+      },
+      undefined,
+      undefined
+    ).on('error', err => {
+      consola.error(err)
+      process.exit(1)
+    })
+    
+    const outStream = fs.createWriteStream(`${path}/CHANGELOG.md`)
+    changelogStream.pipe(outStream)
+
+    outStream.on('finish', resolve)
+  })
+}
+
 async function publish(force: boolean = false) {
-  console.log('publish')
   
   const changedPackages = await getChangedPackages(force)
   if (!changedPackages.length) {
@@ -96,7 +126,9 @@ async function publish(force: boolean = false) {
     const { name, path } = pkg
     consola.log(` -> ${name} (${path})`)
     filter += ` --filter ${name}`
-    await exec(`npx conventional-changelog -p angular --commit-path ${path} -l ${name} -o ${path}/CHANGELOG.md`)
+
+    // await exec(`npx conventional-changelog -p angular --commit-path ${path} -l ${name} -o ${path}/CHANGELOG.md`)
+    await generateChangeLog(pkg)
   }
 
   step('\nBuilding all packages...')

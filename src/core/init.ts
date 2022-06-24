@@ -19,7 +19,6 @@ async function init() {
 
   if (!answer) { // not all packages
     // get all packages
-    const pkgs = await getPkgs()
     const pkgNames = await getPkgsProperty('name')
 
     if (!pkgNames.length) {
