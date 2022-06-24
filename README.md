@@ -1,27 +1,27 @@
 # spark	
-Spark is a publish tool for monorepo,just like lerna but support pnpm.
+Spark is a publish tool for `monorepo`,just like lerna but support `pnpm`.
 
 ## About
 
 ### What can Spark do?
 There are three commands in spark: `spark init`, `spark info` and `spark publish`.
 
-`init` will init spark workspace.
+`init` will initialize spark workspace.
 `info` will show package's info of workspace.
 `publish` will publish any updated packages and generate changelog automatically.
 
 ### What diffrences with lerna?
-* Spark can publish Single package or custom multiple packages.
-* Support `workspack` protocol in `package.json`.
-* Use `pnpm <--filter> publish` so you can keep the `workspack` keyword of `dependencies`.
+* Spark can publish Single package or customize multiple packages.
+* Support `workspace` protocol in `package.json`.
+* Use `pnpm <--filter> publish` so you can keep the `workspace` keyword of `dependencies`.
 * More friendly output of CLI.
-* CLI commands is very very simple!
+* CLI commands are very very simple!
 
 ## Getting Started
 
 ### Project structure
 
-Spark need a file structure like this(the same as lerna project):
+Spark needs a file structure like this(the same as the lerna project):
 
 ```
 your-repo/
@@ -58,7 +58,7 @@ npx spark version
 $ spark init
 ```
 
-Initialize `spark workspace`. There will create a `spark.json`, you can make spark manage all of packages or custom packages.
+Initialize `spark workspace`. There will create a `spark.json`, you can make spark manage all of packages or customized packages.
 
 > Spark assumes the repo has already been initialized with `git init`.
 
@@ -117,7 +117,7 @@ $ spark info --tree
 $ spark publish
 ```
 
-`publish` is core of spark. When run, this command does the following things:
+`publish` is the core of spark. When runing, this command does the following things:
 
 - Find updated packages since the last release(must with `git tag`, otherwise compare with first commit).
 - Select what packages that you want to publish.
@@ -126,7 +126,7 @@ $ spark publish
 - Run `git Commit`, `git tag` and `git push` automatically.
 - Run `pnpm publish`
 
-> spark will never publish packages which does not exits in `spark.json`.
+> spark will never publish packages which do not exits in `spark.json`.
 
 #### publish --force
 Spark will not publish unmodified packages, if you want to publish unmodified packages, use `--force`:
