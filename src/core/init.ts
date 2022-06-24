@@ -15,7 +15,7 @@ async function init() {
       exit()
     }
   }
-  const answer = await promptConfirm('Do you need spark to manage all projects of packages folder?')
+  const answer = await promptConfirm('Do you need sparkee to manage all projects of packages folder?')
 
   if (!answer) { // not all packages
     // get all packages
@@ -51,7 +51,7 @@ async function init() {
     }, { spaces: 2, EOL: '\r\n' })
   }
 
-  consola.success('Spark init successful.')
+  consola.success('Sparkee init successful.')
 }
 
 export default init

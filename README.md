@@ -1,17 +1,17 @@
-# spark	
-Spark is a publish tool for `monorepo`,just like lerna but support `pnpm`.
+# sparkee	
+Sparkee is a publish tool for `monorepo`,just like lerna but support `pnpm`.
 
 ## About
 
-### What can Spark do?
-There are three commands in spark: `spark init`, `spark info` and `spark publish`.
+### What can Sparkee do?
+There are three commands in sparkee: `sparkee init`, `sparkee info` and `sparkee publish`.
 
-`init` will initialize spark workspace.
+`init` will initialize sparkee workspace.
 `info` will show package's info of workspace.
 `publish` will publish any updated packages and generate changelog automatically.
 
 ### What diffrences with lerna?
-* Spark can publish Single package or customize multiple packages.
+* Sparkee can publish Single package or customize multiple packages.
 * Support `workspace` protocol in `package.json`.
 * Use `pnpm <--filter> publish` so you can keep the `workspace` keyword of `dependencies`.
 * More friendly output of CLI.
@@ -21,7 +21,7 @@ There are three commands in spark: `spark init`, `spark info` and `spark publish
 
 ### Project structure
 
-Spark needs a file structure like this(the same as the lerna project):
+Sparkee needs a file structure like this(the same as the lerna project):
 
 ```
 your-repo/
@@ -37,17 +37,17 @@ your-repo/
 
 ```
 # simple install or install it globally with -g
-npm install spark --save-dev
+npm install sparkee --save-dev
 
-# if you install globally, use it `spark <command>`
-spark init
-spark version
-spark publish
+# if you install globally, use it `sparkee <command>`
+sparkee init
+sparkee version
+sparkee publish
 
 # OR use npx in root of project
-npx spark init
-npx spark publish
-npx spark version
+npx sparkee init
+npx sparkee publish
+npx sparkee version
 ```
 
 ### Usage
@@ -55,36 +55,36 @@ npx spark version
 #### init
 
 ```sh
-$ spark init
+$ sparkee init
 ```
 
-Initialize `spark workspace`. There will create a `spark.json`, you can make spark manage all of packages or customized packages.
+Initialize `sparkee workspace`. There will create a `spark.json`, you can make sparkee manage all of packages or customized packages.
 
-> Spark assumes the repo has already been initialized with `git init`.
+> Sparkee assumes the repo has already been initialized with `git init`.
 
 Example output on a new git repo:
 
 Example-1. All packages:
 
 ```sh
-$ spark init
-? Do you need spark to manage all projects of packages folder? yes
-✔ Spark init successful.
+$ sparkee init
+? Do you need sparkee to manage all projects of packages folder? yes
+✔ Sparkee init successful.
 ```
 
 Example-2. Custom packages:
 
 ```sh
-$ spark init
-? Do you need spark to manage all projects of packages folder? No
+$ sparkee init
+? Do you need sparkee to manage all projects of packages folder? No
 ? What packages do you want to manage? @geocld/pkg1
-✔ Spark init successful.
+✔ Sparkee init successful.
 ```
 
 #### info
 
 ```sh
-$ spark info <--tree>
+$ sparkee info <--tree>
 ```
 
 Print local information of packages.
@@ -92,7 +92,7 @@ Print local information of packages.
 Example:
 
 ```bash
-$ spark info
+$ sparkee info
 > Current monorepo packages:
   · @geocld/pkg1: v1.0.0
   · @geocld/pkg2: v1.0.0
@@ -101,7 +101,7 @@ $ spark info
 Or Print detail dependencies tree of packages:
 
 ```bash
-$ spark info --tree
+$ sparkee info --tree
 
 @geocld/pkg1@1.0.0
 ╰── @geocld/pkg2@1.0.0
@@ -114,10 +114,10 @@ $ spark info --tree
 #### publish
 
 ```bash
-$ spark publish
+$ sparkee publish
 ```
 
-`publish` is the core of spark. When runing, this command does the following things:
+`publish` is the core of sparkee. When runing, this command does the following things:
 
 - Find updated packages since the last release(must with `git tag`, otherwise compare with first commit).
 - Select what packages that you want to publish.
@@ -126,10 +126,10 @@ $ spark publish
 - Run `git Commit`, `git tag` and `git push` automatically.
 - Run `pnpm publish`
 
-> spark will never publish packages which do not exits in `spark.json`.
+> sparkee will never publish packages which do not exits in `spark.json`.
 
 #### publish --force
-Spark will not publish unmodified packages, if you want to publish unmodified packages, use `--force`:
+Sparkee will not publish unmodified packages, if you want to publish unmodified packages, use `--force`:
 
 ```bash
 lerna publish --force

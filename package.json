@@ -1,5 +1,5 @@
 {
-  "name": "spark",
+  "name": "sparkee",
   "version": "1.0.0-beta",
   "description": "A publish tool for monorepo,just like lerna but support pnpm.",
   "author": "lijiahao <lijiahao5372@gmail.com>",
@@ -9,8 +9,12 @@
     "build": "tsc"
   },
   "bin": {
-    "spark": "dist/index.js",
+    "sparkee": "dist/index.js",
     "spk": "dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Geocld/sparkee"
   },
   "keywords": [
     "monorepo",
