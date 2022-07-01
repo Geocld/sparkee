@@ -13,10 +13,13 @@ import { rejects } from 'assert'
 function generateChangeLog(pkg) {
   const { name, path } = pkg
   return new Promise((resolve, reject) => {
+    // https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-core/README.md
     const changelogStream = conventionalChangelog(
       {
         preset: 'angular',
-        pkg: { path: undefined },
+        pkg: { 
+          path // The location of your "package.json".
+        },
         lernaPackage: name
       },
       undefined,
