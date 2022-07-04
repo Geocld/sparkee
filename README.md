@@ -1,4 +1,6 @@
 # sparkee	
+English | [中文文档](http://geocld.github.io/2022/07/04/sparkee/)
+
 Sparkee is a publish tool for `monorepo`,just like lerna but support `pnpm`.
 
 ## About
@@ -127,6 +129,10 @@ $ sparkee publish
 - Run `pnpm publish`
 
 > sparkee will never publish packages which do not exits in `spark.json`.
+
+The workflow of `sparkee` is as follows:
+
+![workflow](http://geocld.github.io/img/sparkee/workflow.png)
 
 #### publish --force
 Sparkee will not publish unmodified packages, if you want to publish unmodified packages, use `--force`:
