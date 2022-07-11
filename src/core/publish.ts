@@ -16,14 +16,28 @@ function generateChangeLog(pkg) {
     // https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-core/README.md
     const changelogStream = conventionalChangelog(
       {
-        preset: 'angular',
-        pkg: { 
+        // preset: 'angular', // use https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-angular/README.md
+        preset: {
+          name: 'conventionalcommits',
+          types: [
+            { type: 'feat', section: 'Features' },
+            { type: 'fix', section: 'Bug grgrgr' },
+            { type: 'perf', section: 'Performance' },
+            { type: 'refactor', section: 'Refactoring' },
+            { type: 'test', section: 'Testing' },
+            { type: 'docs', section: 'Documentation' },
+            { type: 'build', hidden: true },
+            { type: 'style', hidden: true }
+          ]
+        },
+        pkg: {
           path // The location of your "package.json".
         },
         lernaPackage: name
       },
       undefined,
-      { // commit-path
+      {
+        // commit-path
         path
       },
       undefined,
@@ -32,8 +46,8 @@ function generateChangeLog(pkg) {
       consola.error(err)
       process.exit(1)
     })
-    
-    const outStream = fs.createWriteStream(`${path}/CHANGELOG.md`)
+
+    const outStream = fs.createWriteStream(`${path}/CHANGELOG.md`, { flags: 'a' })
     changelogStream.pipe(outStream)
 
     outStream.on('finish', resolve)
@@ -41,7 +55,6 @@ function generateChangeLog(pkg) {
 }
 
 async function publish(force: boolean = false) {
-  
   const changedPackages = await getChangedPackages(force)
   if (!changedPackages.length) {
     consola.warn('No packages have changed since last release')
@@ -52,20 +65,14 @@ async function publish(force: boolean = false) {
     choices: changedPackages.map(pkg => pkg.name)
   })
 
-  const packagesToRelease = changedPackages.filter((pkg) =>
-    pickedPackages.includes(pkg.name)
-  )
+  const packagesToRelease = changedPackages.filter(pkg => pickedPackages.includes(pkg.name))
 
   if (!packagesToRelease.length) {
     consola.warn('Release packages cannot be empty.')
     exit()
   }
 
-  consola.log(
-    `Ready to release ${packagesToRelease
-      .map(({ name }) => chalk.bold.white(name))
-      .join(', ')}`
-  )
+  consola.log(`Ready to release ${packagesToRelease.map(({ name }) => chalk.bold.white(name)).join(', ')}`)
 
   const pkgWithVersions = await runTaskSync(
     packagesToRelease.map(({ name, path, pkg }) => async () => {
@@ -78,17 +85,13 @@ async function publish(force: boolean = false) {
         'patch',
         'minor',
         'major',
-        ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : []),
+        ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : [])
       ]
 
-      const choices = versionIncrements
-                      .map((i) => `${i}: ${name} (${semver.inc(version, i, preId)})`)
-                      .concat(['custom'])
+      const choices = versionIncrements.map(i => `${i}: ${name} (${semver.inc(version, i, preId)})`).concat(['custom'])
 
       const release = await promptSelect(`Select release type for ${chalk.bold.green(name)}`, {
-        choices: versionIncrements
-        .map((i) => `${i}: ${name} (${semver.inc(version, i, preId)})`)
-        .concat(['custom'])
+        choices: versionIncrements.map(i => `${i}: ${name} (${semver.inc(version, i, preId)})`).concat(['custom'])
       })
 
       if (release === 'custom') {
@@ -109,10 +112,7 @@ async function publish(force: boolean = false) {
 
   const isReleaseConfirmed = await promptConfirm(
     `Releasing \n${pkgWithVersions
-      .map(
-        ({ name, version }) =>
-          `  · ${chalk.white(name)}: ${chalk.yellow.bold('v' + version)}`
-      )
+      .map(({ name, version }) => `  · ${chalk.white(name)}: ${chalk.yellow.bold('v' + version)}`)
       .join('\n')}\nConfirm?`
   )
 
@@ -140,19 +140,12 @@ async function publish(force: boolean = false) {
   const { stdout: hasChanges } = await exec('git diff')
   if (hasChanges) {
     step('\nCommitting changes...')
-    live([
-      'git',
-      'add',
-      'packages/*/CHANGELOG.md',
-      'packages/*/package.json'
-    ])
+    live(['git', 'add', 'packages/*/CHANGELOG.md', 'packages/*/package.json'])
     const commitCode = live([
       'git',
       'commit',
       '-m',
-      `release: ${pkgWithVersions
-        .map(({ name, version }) => `${name}@${version}`)
-        .join(' ')}`
+      `release: ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`
     ])
     if (commitCode !== 0) {
       exit()
@@ -166,29 +159,20 @@ async function publish(force: boolean = false) {
   for (const pkg of pkgWithVersions) {
     const { name, version } = pkg
     versionsToPush.push(`refs/tags/${name}@${version}`)
-    const tagCode = live([
-      'git',
-      'tag',
-      `${name}@${version}`
-    ])
+    const tagCode = live(['git', 'tag', `${name}@${version}`])
     if (tagCode !== 0) {
       exit()
     }
   }
 
   step('\nPushing to Git...')
-  const pushCode = live([
-    'git',
-    'push',
-    'origin',
-    ...versionsToPush
-  ])
+  const pushCode = live(['git', 'push', 'origin', ...versionsToPush])
 
   if (pushCode !== 0) {
     exit()
   }
 
-  step('\Publishing packages...')
+  step('Publishing packages...')
   live(`pnpm${filter} publish`)
 }
 
