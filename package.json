@@ -1,6 +1,6 @@
 {
   "name": "sparkee",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A publish tool for monorepo,just like lerna but support pnpm.",
   "author": "lijiahao <lijiahao5372@gmail.com>",
   "main": "dist/index.js",
