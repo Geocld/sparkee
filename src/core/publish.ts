@@ -61,6 +61,13 @@ async function publish(force: boolean = false) {
     exit()
   }
 
+  const { stdout: beforeChanges } = await exec('git diff')
+  const { stdout: beforeUntrackedFile } = await exec('git ls-files --others --exclude-standard')
+  if (beforeChanges || beforeUntrackedFile) {
+    consola.warn('Please commit your change before publish.')
+    exit()
+  }
+
   const pickedPackages = await promptCheckbox('What packages do you want to publish?', {
     choices: changedPackages.map(pkg => pkg.name)
   })
@@ -138,7 +145,8 @@ async function publish(force: boolean = false) {
   live(`pnpm${filter} build`) // use live to preserve colors of stdout
 
   const { stdout: hasChanges } = await exec('git diff')
-  if (hasChanges) {
+  const { stdout: untrackedFile } = await exec('git ls-files --others --exclude-standard')
+  if (hasChanges || untrackedFile) {
     step('\nCommitting changes...')
     live(['git', 'add', 'packages/*/CHANGELOG.md', 'packages/*/package.json'])
     const commitCode = live([
@@ -172,6 +180,7 @@ async function publish(force: boolean = false) {
     exit()
   }
 
+  // TODO: rollback if publish fail
   step('Publishing packages...')
   live(`pnpm${filter} publish`)
 }
