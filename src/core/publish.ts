@@ -11,7 +11,7 @@ import { rejects } from 'assert'
 
 // publish package, you can publish all or publish single package.
 
-function generateChangeLog(pkg) {
+function generateChangeLog(pkg, singleRepo = false) {
   const { name, path } = pkg
   return new Promise((resolve, reject) => {
     // https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-core/README.md
@@ -48,7 +48,7 @@ function generateChangeLog(pkg) {
       process.exit(1)
     })
 
-    const outStream = fs.createWriteStream(`${path}/CHANGELOG.md`, { flags: 'a' })
+    const outStream = fs.createWriteStream(`${path}/CHANGELOG.md`, singleRepo ? undefined : { flags: 'a' })
     changelogStream.pipe(outStream)
 
     outStream.on('finish', resolve)
@@ -145,7 +145,8 @@ async function publish(force: boolean = false) {
       {
         name: changedPackages[0].name,
         path: ROOT
-      }
+      },
+      singleRepo
     )
 
     step('\nBuilding package...')
