@@ -1,3 +1,10 @@
+### 1.0.7 (2022-08-12)
+
+
+### FixBug
+
+* changelog is incorrect in single repo ([5b41ec3](https://github.com/Geocld/sparkee/commit/5b41ec3e048c97d350bb992f3aba97021f140831))
+
 ### 1.0.6 (2022-08-12)
 
 
