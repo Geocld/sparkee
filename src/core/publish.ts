@@ -163,7 +163,7 @@ async function publish(force: boolean = false) {
       'git',
       'commit',
       '-m',
-      `release: ${newVersion})}`
+      `release: ${newVersion}`
     ])
     if (commitCode !== 0) {
       exit()
