@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc",
-    "publish": "node dist/index.js publish"
+    "pub": "node dist/index.js publish"
   },
   "bin": {
     "sparkee": "dist/index.js",
