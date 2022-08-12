@@ -5,8 +5,9 @@
   "author": "lijiahao <lijiahao5372@gmail.com>",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsc -w",
-    "build": "tsc"
+    "dev": "rimraf dist && tsc -w",
+    "build": "rimraf dist && tsc",
+    "publish": "node dist/index.js publish"
   },
   "bin": {
     "sparkee": "dist/index.js",
@@ -33,6 +34,7 @@
     "glob": "^8.0.3",
     "inquirer": "^8.2.4",
     "jsonfile": "^6.1.0",
+    "rimraf": "^3.0.2",
     "semver": "^7.3.7",
     "shelljs": "^0.8.5",
     "shelljs-live": "^0.0.5",

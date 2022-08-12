@@ -1,5 +1,7 @@
 import consola from 'consola'
 import chalk from 'chalk'
+import jsonfile from 'jsonfile'
+import { SPARK_JSON, ROOT_PACKAGE } from '../common/constans'
 import { getChangedPackages } from '../utils'
 
 enum Position {
@@ -55,6 +57,17 @@ function draw(dependency, prefix, state, pmap, versionMap) {
 
 // view current versions of packages
 async function info(tree: boolean = false) {
+  const sparkConfig = await jsonfile.readFile(SPARK_JSON)
+  const { singleRepo } = sparkConfig
+  if (singleRepo) {
+    const { name, version } = await jsonfile.readFile(ROOT_PACKAGE)
+    consola.log(
+      chalk.bold(
+    `Current package: ${chalk.green(name)} ${chalk.yellow.bold('v' + version)}`)
+    )
+    return
+  }
+
   const packages = await getChangedPackages(true)
   if (tree) {
     resolveDepsTree(packages)

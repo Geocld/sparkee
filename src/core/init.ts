@@ -2,8 +2,13 @@ import fs from 'fs-extra'
 import consola from 'consola'
 import jsonfile from 'jsonfile'
 import { ROOT, SPARK_JSON, PACKAGES } from '../common/constans'
-import { promptConfirm, promptCheckbox } from '../common/prompt'
+import { promptConfirm, promptCheckbox, promptSelect } from '../common/prompt'
 import { getPkgs, getPkgsProperty, exit } from '../utils'
+
+enum RepoType {
+  SINGLEREPO = 'singleRepo',
+  MONOREPO = 'monorepo'
+}
 
 // monorepo init and spark.json init
 async function init() {
@@ -15,6 +20,21 @@ async function init() {
       exit()
     }
   }
+
+  const repoType = await promptSelect(`Please select repo type:`, {
+    choices: [RepoType.MONOREPO, RepoType.SINGLEREPO]
+  })
+
+  if (repoType === RepoType.SINGLEREPO) {
+    jsonfile.writeFileSync('spark.json', {
+      singleRepo: true,
+      moduleManager: 'npm'
+    }, { spaces: 2, EOL: '\r\n' })
+
+    consola.success('Sparkee init as singleRepo successful.')
+    return
+  }
+  
   const answer = await promptConfirm('Do you need sparkee to manage all projects of packages folder?')
 
   if (!answer) { // not all packages
@@ -41,16 +61,18 @@ async function init() {
     }
     
     jsonfile.writeFileSync('spark.json', {
-      packages: choice
+      packages: choice,
+      moduleManager: 'pnpm'
     }, { spaces: 2, EOL: '\r\n' })
 
   } else { // select all
     jsonfile.writeFileSync('spark.json', {
-      packages: '*'
+      packages: '*',
+      moduleManager: 'pnpm'
     }, { spaces: 2, EOL: '\r\n' })
   }
 
-  consola.success('Sparkee init successful.')
+  consola.success('Sparkee init as monorepo successful.')
 }
 
 export default init

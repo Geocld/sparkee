@@ -8,3 +8,4 @@ function pathResolve(p: string): string {
 
 export const SPARK_JSON = pathResolve('spark.json')
 export const PACKAGES = pathResolve('packages')
+export const ROOT_PACKAGE = pathResolve('package.json')

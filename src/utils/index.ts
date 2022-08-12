@@ -5,7 +5,7 @@ import shell from 'shelljs'
 import consola from 'consola'
 import chalk from 'chalk'
 import jsonfile from 'jsonfile'
-import { ROOT, PACKAGES, SPARK_JSON } from '../common/constans'
+import { ROOT, PACKAGES, SPARK_JSON, ROOT_PACKAGE } from '../common/constans'
 
 async function getFolders(packages: string[] | string = '*'): Promise<string[]> {
   let folders = await glob.sync('packages/*')
@@ -66,8 +66,16 @@ export function step(msg: string) {
   consola.log(chalk.cyan(msg))
 }
 
-export async function getChangedPackages(force: boolean = false): Promise<any[]> {
+export async function getChangedPackages(force: boolean = false): Promise<any[]> {  
   let lastTag
+
+  // get packages of spark.json
+  if (!fs.existsSync(SPARK_JSON)) {
+    consola.error('`spark.json` was not found, please try to run `sparkee init` to init repo.')
+    exit()
+  }
+  const sparkConfig = await jsonfile.readFile(SPARK_JSON)
+  const { singleRepo, packages } =  sparkConfig
 
   const { stdout: tag, stderr } = await exec('git describe --tags --abbrev=0')
 
@@ -79,29 +87,40 @@ export async function getChangedPackages(force: boolean = false): Promise<any[]>
     lastTag = formatStdout(tag)
   }
 
-  // get packages of spark.json
-  const sparkConfig = await jsonfile.readFile(SPARK_JSON)
-  const { packages } =  sparkConfig
-  
-  // get folders match managed packages
-  const folders = await getFolders(packages)
+  if (singleRepo) {
+    consola.warn('You will publish as singleRepo.')
+    const { stdout: hasChanges } = await exec(`git diff ${lastTag}`)
+    const pkg = await jsonfile.readFile(ROOT_PACKAGE)
+    if (!force && !hasChanges) {
+      return []
+    }
+    return [{
+      path: ROOT,
+      name: pkg.name,
+      version: pkg.version,
+      pkg,
+    }]
+  } else { // monorepo
+    // get folders match managed packages
+    const folders = await getFolders(packages)
 
-  const pkgs = await Promise.all(
-    folders.map(async (folder) => {
-      const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
-      const { stdout: hasChanges } = await exec(`git diff ${lastTag} -- ${join(folder, 'src')} ${join(folder, 'package.json')}`)
-      if (force || hasChanges) { // force mode return all packages
-        return {
-          path: folder,
-          name: pkg.name,
-          version: pkg.version,
-          pkg,
+    const pkgs = await Promise.all(
+      folders.map(async (folder) => {
+        const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
+        const { stdout: hasChanges } = await exec(`git diff ${lastTag} -- ${join(folder, 'src')} ${join(folder, 'package.json')}`)
+        if (force || hasChanges) { // force mode return all packages
+          return {
+            path: folder,
+            name: pkg.name,
+            version: pkg.version,
+            pkg,
+          }
         }
-      }
-    })
-  )
-  
-  return pkgs.filter(p => p)
+      })
+    )
+    
+    return pkgs.filter(p => p)
+  }
 }
 
 type Package= {
@@ -135,4 +154,14 @@ export async function runTaskSync(tasks: Function[]): Promise<any[]> {
 	}
 
 	return results
+}
+
+export async function readSpkfile() {
+  const configs = await jsonfile.readFile(SPARK_JSON)
+  return configs
+}
+
+export async function readRootPKg() {
+  const pkg = await jsonfile.readFile(ROOT_PACKAGE)
+  return pkg
 }

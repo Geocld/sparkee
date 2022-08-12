@@ -4,8 +4,9 @@ import chalk from 'chalk'
 import semver from 'semver'
 import live from 'shelljs-live'
 import conventionalChangelog from 'conventional-changelog'
+import { ROOT } from '../common/constans'
 import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
-import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions } from '../utils'
+import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, readSpkfile } from '../utils'
 import { rejects } from 'assert'
 
 // publish package, you can publish all or publish single package.
@@ -21,7 +22,7 @@ function generateChangeLog(pkg) {
           name: 'conventionalcommits',
           types: [
             { type: 'feat', section: 'Features' },
-            { type: 'fix', section: 'Bug grgrgr' },
+            { type: 'fix', section: 'FixBug' },
             { type: 'perf', section: 'Performance' },
             { type: 'refactor', section: 'Refactoring' },
             { type: 'test', section: 'Testing' },
@@ -55,11 +56,6 @@ function generateChangeLog(pkg) {
 }
 
 async function publish(force: boolean = false) {
-  const changedPackages = await getChangedPackages(force)
-  if (!changedPackages.length) {
-    consola.warn('No packages have changed since last release')
-    exit()
-  }
 
   const { stdout: beforeChanges } = await exec('git diff')
   const { stdout: beforeUntrackedFile } = await exec('git ls-files --others --exclude-standard')
@@ -68,9 +64,22 @@ async function publish(force: boolean = false) {
     exit()
   }
 
-  const pickedPackages = await promptCheckbox('What packages do you want to publish?', {
-    choices: changedPackages.map(pkg => pkg.name)
-  })
+  const changedPackages = await getChangedPackages(force)
+  if (!changedPackages.length) {
+    consola.warn('No packages have changed since last release, you can run `--force` to publish all packages.')
+    exit()
+  }
+
+  const { singleRepo = false, moduleManager = 'pnpm' } = await readSpkfile()
+
+  let pickedPackages
+  if (singleRepo) {
+    pickedPackages = [changedPackages[0].name]
+  } else {
+    pickedPackages = await promptCheckbox('What packages do you want to publish?', {
+      choices: changedPackages.map(pkg => pkg.name)
+    })
+  }
 
   const packagesToRelease = changedPackages.filter(pkg => pickedPackages.includes(pkg.name))
 
@@ -130,59 +139,112 @@ async function publish(force: boolean = false) {
   step('\nUpdating versions in package.json files...')
   await updateVersions(pkgWithVersions)
 
-  step('\nGenerating changelogs...')
-  let filter = ''
-  for (const pkg of pkgWithVersions) {
-    const { name, path } = pkg
-    consola.log(` -> ${name} (${path})`)
-    filter += ` --filter ${name}`
+  if (singleRepo) {
+    step('\nGenerating changelogs...')
+    await generateChangeLog(
+      {
+        name: changedPackages[0].name,
+        path: ROOT
+      }
+    )
 
-    // await exec(`npx conventional-changelog -p angular --commit-path ${path} -l ${name} -o ${path}/CHANGELOG.md`)
-    await generateChangeLog(pkg)
-  }
+    step('\nBuilding package...')
+    live([
+      moduleManager,
+      'run',
+      'build'
+    ])
 
-  step('\nBuilding all packages...')
-  live(`pnpm${filter} build`) // use live to preserve colors of stdout
+    const { version: newVersion } = pkgWithVersions[0]
 
-  const { stdout: hasChanges } = await exec('git diff')
-  const { stdout: untrackedFile } = await exec('git ls-files --others --exclude-standard')
-  if (hasChanges || untrackedFile) {
     step('\nCommitting changes...')
-    live(['git', 'add', 'packages/*/CHANGELOG.md', 'packages/*/package.json'])
+    live(['git', 'add', '.'])
     const commitCode = live([
       'git',
       'commit',
       '-m',
-      `release: ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`
+      `release: ${newVersion})}`
     ])
     if (commitCode !== 0) {
       exit()
     }
-  } else {
-    consola.warn(chalk.yellow('No changes to commit.'))
-  }
 
-  step('\nCreating tags...')
-  let versionsToPush: string[] = []
-  for (const pkg of pkgWithVersions) {
-    const { name, version } = pkg
-    versionsToPush.push(`refs/tags/${name}@${version}`)
-    const tagCode = live(['git', 'tag', `${name}@${version}`])
+    step('\nCreating tags...')
+    const tagCode = live(['git', 'tag', newVersion])
     if (tagCode !== 0) {
       exit()
     }
+
+    step('\nPushing to Git...')
+    const pushCode = live(['git', 'push', 'origin', newVersion])
+
+    if (pushCode !== 0) {
+      exit()
+    }
+
+    // TODO: rollback if publish fail
+    step('Publishing package...')
+    live([
+      moduleManager,
+      'publish'
+    ])
+
+  } else { // monorepo
+
+    step('\nGenerating changelogs...')
+    let filter = ''
+    for (const pkg of pkgWithVersions) {
+      const { name, path } = pkg
+      consola.log(` -> ${name} (${path})`)
+      filter += ` --filter ${name}`
+
+      // await exec(`npx conventional-changelog -p angular --commit-path ${path} -l ${name} -o ${path}/CHANGELOG.md`)
+      await generateChangeLog(pkg)
+    }
+
+    step('\nBuilding all packages...')
+    live(`pnpm${filter} build`) // use live to preserve colors of stdout
+
+    const { stdout: hasChanges } = await exec('git diff')
+    const { stdout: untrackedFile } = await exec('git ls-files --others --exclude-standard')
+    if (hasChanges || untrackedFile) {
+      step('\nCommitting changes...')
+      live(['git', 'add', 'packages/*/CHANGELOG.md', 'packages/*/package.json'])
+      const commitCode = live([
+        'git',
+        'commit',
+        '-m',
+        `release: ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`
+      ])
+      if (commitCode !== 0) {
+        exit()
+      }
+    } else {
+      consola.warn(chalk.yellow('No changes to commit.'))
+    }
+
+    step('\nCreating tags...')
+    let versionsToPush: string[] = []
+    for (const pkg of pkgWithVersions) {
+      const { name, version } = pkg
+      versionsToPush.push(`refs/tags/${name}@${version}`)
+      const tagCode = live(['git', 'tag', `${name}@${version}`])
+      if (tagCode !== 0) {
+        exit()
+      }
+    }
+
+    step('\nPushing to Git...')
+    const pushCode = live(['git', 'push', 'origin', ...versionsToPush])
+
+    if (pushCode !== 0) {
+      exit()
+    }
+
+    // TODO: rollback if publish fail
+    step('Publishing packages...')
+    live(`pnpm${filter} publish`)
   }
-
-  step('\nPushing to Git...')
-  const pushCode = live(['git', 'push', 'origin', ...versionsToPush])
-
-  if (pushCode !== 0) {
-    exit()
-  }
-
-  // TODO: rollback if publish fail
-  step('Publishing packages...')
-  live(`pnpm${filter} publish`)
 }
 
 export default publish
