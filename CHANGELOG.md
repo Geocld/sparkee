@@ -1,3 +1,10 @@
+### 1.0.8 (2022-08-23)
+
+
+### Refactoring
+
+* changelog FixBug -> Bugfix ([a858f80](https://github.com/Geocld/sparkee/commit/a858f801844a446d39f529e3b5e1771b8eefff39))
+
 ### 1.0.7 (2022-08-12)
 
 
