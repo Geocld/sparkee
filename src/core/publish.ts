@@ -22,7 +22,7 @@ function generateChangeLog(pkg, singleRepo = false) {
           name: 'conventionalcommits',
           types: [
             { type: 'feat', section: 'Features' },
-            { type: 'fix', section: 'FixBug' },
+            { type: 'fix', section: 'Bugfix' },
             { type: 'perf', section: 'Performance' },
             { type: 'refactor', section: 'Refactoring' },
             { type: 'test', section: 'Testing' },
