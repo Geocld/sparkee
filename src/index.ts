@@ -3,6 +3,7 @@
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 import init from './core/init'
+import run from './core/run'
 import publish from './core/publish'
 import info from './core/info'
 
@@ -18,6 +19,9 @@ yargs(hideBin(process.argv))
   }, (argv) => {
     const tree = argv.tree as Option
     info(tree)
+  })
+  .command('run', 'Run the script of package.', () => {}, (argv) => {
+    run()
   })
   .command('publish', 'Publish packages in the current project.', (args) => {
     args.option('force', { demand: false }).alias('f', 'force')

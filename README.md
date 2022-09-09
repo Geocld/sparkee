@@ -1,7 +1,7 @@
 # sparkee	
 English | [中文文档](http://geocld.github.io/2022/07/04/sparkee/)
 
-Sparkee is a publish tool for `monorepo`,just like lerna but support `pnpm`.
+Sparkee is a publish tool for `monorepo`,just like lerna but support `pnpm`, also support singleRepo.
 
 ## About
 
@@ -9,6 +9,7 @@ Sparkee is a publish tool for `monorepo`,just like lerna but support `pnpm`.
 There are three commands in sparkee: `sparkee init`, `sparkee info` and `sparkee publish`.
 
 `init` will initialize sparkee workspace.
+`run` will run the script of package.
 `info` will show package's info of workspace.
 `publish` will publish any updated packages and generate changelog automatically.
 
@@ -81,6 +82,42 @@ $ sparkee init
 ? Do you need sparkee to manage all projects of packages folder? No
 ? What packages do you want to manage? @geocld/pkg1
 ✔ Sparkee init successful.
+``` 
+
+Example-3. single repo:
+
+```sh
+$ sparkee init
+? Please select repo type: singleRepo
+✔ Sparkee init as singleRepo successful.
+```
+In singleRepo mode, `spark.json` will be:
+
+```json
+{
+  "singleRepo": true,
+  "moduleManager": "npm"
+}
+```
+
+`singleRepo` : Must be `true` in single repo.
+`moduleManager`: Can be `npm` or `yarn` or `pnpm`.
+
+#### run(supported in v1.1.0)
+
+```sh
+$ sparkee run
+```
+
+Run the `scripts` of `packages.json`:
+
+Example:
+
+```bash
+$ sparkee run
+? Please select script: (Use arrow keys)
+❯ dev -> rimraf dist && tsc -w
+  build -> rimraf dist && tsc
 ```
 
 #### info
@@ -138,8 +175,52 @@ The workflow of `sparkee` is as follows:
 Sparkee will not publish unmodified packages, if you want to publish unmodified packages, use `--force`:
 
 ```bash
-lerna publish --force
+sparkee publish --force
 ```
+
+#### publish --noPublish
+If yout want `sparkee` just genetate changelog and create tag, `publish` command run in other place(such as `pipeline`), use `--noPublish` or `--np`:
+
+```bash
+sparkee publish --noPublish
+
+or
+
+sparkee publish --np
+```
+
+#### Custom changelLog commit message types
+
+`sparkee` use [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog) internally to generate `CHANGELOG.md`,the `commit types` config is :
+
+```js
+[
+  { type: 'feat', section: 'Features' },
+  { type: 'fix', section: 'Bugfixes' },
+  { type: 'perf', section: 'Performance' },
+  { type: 'refactor', section: 'Refactoring' },
+  { type: 'test', section: 'Testing' },
+  { type: 'docs', section: 'Documentation' },
+  { type: 'build', hidden: true },
+  { type: 'style', hidden: true }
+]
+```
+
+If you want to use custom `commit types` to format changelog, you can config `logPresetTypes` in `spark.json` to override the default config:
+
+```js
+// spark.json
+{
+  "singleRepo": true,
+  "moduleManager": "npm",
+  "logPresetTypes": [
+    { type: "feat", section: "New features" },
+    { type: "fix", section: 'Bug fixes' },
+    { type: "chore", section: 'gregregre...' },
+  ]
+}
+```
+> More configurations refer: [conventional-changelog-config-spec](https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md)
 
 ## License
 
