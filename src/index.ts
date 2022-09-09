@@ -21,9 +21,11 @@ yargs(hideBin(process.argv))
   })
   .command('publish', 'Publish packages in the current project.', (args) => {
     args.option('force', { demand: false }).alias('f', 'force')
+    args.option('noPublish', { demand: false }).alias('np', 'noPublish')
   }, (argv) => {
     const force = argv.force as Option
-    publish(force)
+    const noPublish = argv.noPublish as Option
+    publish(force, noPublish)
   })
   .demandCommand(1, 'A command is required. Pass --help to see all available commands and options.')
   .strict()

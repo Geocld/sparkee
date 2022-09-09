@@ -11,18 +11,26 @@ import { rejects } from 'assert'
 
 // publish package, you can publish all or publish single package.
 
-function generateChangeLog(pkg, singleRepo = false) {
+async function generateChangeLog(pkg, singleRepo = false) {
   const { name, path } = pkg
+  const { logPresetTypes } = await readSpkfile()
+  if (logPresetTypes && !Array.isArray(logPresetTypes)) {
+    console.error(
+      chalk.red(`${chalk.white('[logPresetTypes]')} must be Array, you can refer to ${chalk.green('https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md')}.`)
+    )
+    process.exit(1)
+  }
   return new Promise((resolve, reject) => {
     // https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-core/README.md
     const changelogStream = conventionalChangelog(
       {
         // preset: 'angular', // use https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-angular/README.md
+        // custom presets: https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md
         preset: {
           name: 'conventionalcommits',
-          types: [
+          types: logPresetTypes || [
             { type: 'feat', section: 'Features' },
-            { type: 'fix', section: 'Bugfix' },
+            { type: 'fix', section: 'Bugfixes' },
             { type: 'perf', section: 'Performance' },
             { type: 'refactor', section: 'Refactoring' },
             { type: 'test', section: 'Testing' },
@@ -55,8 +63,7 @@ function generateChangeLog(pkg, singleRepo = false) {
   })
 }
 
-async function publish(force: boolean = false) {
-
+async function publish(force: boolean = false, noPublish: boolean = false) {
   const { stdout: beforeChanges } = await exec('git diff')
   const { stdout: beforeUntrackedFile } = await exec('git ls-files --others --exclude-standard')
   if (beforeChanges || beforeUntrackedFile) {
@@ -183,6 +190,11 @@ async function publish(force: boolean = false) {
       exit()
     }
 
+    // no publish option, you can set this option in pipeline
+    if (noPublish) {
+      return
+    }
+
     // TODO: rollback if publish fail
     step('Publishing package...')
     live([
@@ -240,6 +252,11 @@ async function publish(force: boolean = false) {
 
     if (pushCode !== 0) {
       exit()
+    }
+
+    // no publish option, you can set this option in pipeline
+    if (noPublish) {
+      return
     }
 
     // TODO: rollback if publish fail
