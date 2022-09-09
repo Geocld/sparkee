@@ -1,3 +1,11 @@
+## 1.1.0 (2022-09-09)
+
+
+### Features
+
+* add noPublish option to adaptive pipeline workflow ([61b9d6d](https://github.com/Geocld/sparkee/commit/61b9d6db1421dbc8d34e60e76a4f4532c318671e))
+* run command to run sctipt ([2b5c35b](https://github.com/Geocld/sparkee/commit/2b5c35b8a327f78ed9043fff050e0592f4a7f9eb))
+
 ### 1.0.8 (2022-08-23)
 
 
@@ -8,14 +16,14 @@
 ### 1.0.7 (2022-08-12)
 
 
-### FixBug
+### Bugfixes
 
 * changelog is incorrect in single repo ([5b41ec3](https://github.com/Geocld/sparkee/commit/5b41ec3e048c97d350bb992f3aba97021f140831))
 
 ### 1.0.6 (2022-08-12)
 
 
-### FixBug
+### Bugfixes
 
 * release commit message ([b91f432](https://github.com/Geocld/sparkee/commit/b91f432845c5c9dec4a52ef3f882740b26c5765b))
 
@@ -29,7 +37,7 @@
 ### 1.0.4 (2022-08-10)
 
 
-### FixBug
+### Bugfixes
 
 * publish fail because of untracked file ([d970651](https://github.com/Geocld/sparkee/commit/d9706512110f81e0f19bc931d1f8462d6bf48a87))
 
@@ -41,21 +49,21 @@
 * add chinese doc and workflow ([3952a08](https://github.com/Geocld/sparkee/commit/3952a08fa5af650715ac33c71714631bc61b2a5e))
 
 
-### FixBug
+### Bugfixes
 
 * changelog preset and new log add to changelog.md ([8be3e70](https://github.com/Geocld/sparkee/commit/8be3e7069c468c002e04f901459406022da97e14))
 
 ### 1.0.1 (2022-07-01)
 
 
-### FixBug
+### Bugfixes
 
 * changeLog version issues ([be89c2d](https://github.com/Geocld/sparkee/commit/be89c2d104c6d903fdf6adedb67c8cbfcd7a236f))
 
 ## 1.0.0 (2022-06-24)
 
 
-### FixBug
+### Bugfixes
 
 * init path and changelog generate ([41f0bb8](https://github.com/Geocld/sparkee/commit/41f0bb8498287445457f30ad586e15efd2858789))
 
