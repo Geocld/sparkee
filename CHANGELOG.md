@@ -1,3 +1,10 @@
+### 1.1.1 (2022-09-09)
+
+
+### Bugfixes
+
+* pnpm run command in monorepo ([b64420b](https://github.com/Geocld/sparkee/commit/b64420bc9d20c4b6249ca92e836d92f7b9280e44))
+
 ## 1.1.0 (2022-09-09)
 
 
