@@ -1,3 +1,10 @@
+### 1.1.3 (2022-11-21)
+
+
+### Features
+
+* custom changelog commit type and tag ([0e4e2ea](https://github.com/Geocld/sparkee/commit/0e4e2eaab9c04264e00856ce26f9c64592d42684))
+
 ### 1.1.2 (2022-11-21)
 
 
