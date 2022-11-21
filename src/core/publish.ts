@@ -64,6 +64,8 @@ async function generateChangeLog(pkg, singleRepo = false) {
 }
 
 async function publish(force: boolean = false, noPublish: boolean = false) {
+  const { logCommit } = await readSpkfile()
+
   const { stdout: beforeChanges } = await exec('git diff')
   const { stdout: beforeUntrackedFile } = await exec('git ls-files --others --exclude-standard')
   if (beforeChanges || beforeUntrackedFile) {
@@ -215,19 +217,24 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
       await generateChangeLog(pkg)
     }
 
-    step('\nBuilding all packages...')
-    live(`pnpm${filter} build`) // use live to preserve colors of stdout
+    if (!noPublish) {
+      step('\nBuilding all packages...')
+      live(`pnpm${filter} build`) // use live to preserve colors of stdout
+    }
 
     const { stdout: hasChanges } = await exec('git diff')
     const { stdout: untrackedFile } = await exec('git ls-files --others --exclude-standard')
+    const commitType = logCommit ? logCommit.type : 'release'
+    const commitTag = logCommit ? logCommit.commitTag : ''
+
     if (hasChanges || untrackedFile) {
       step('\nCommitting changes...')
-      live(['git', 'add', 'packages/*/CHANGELOG.md', 'packages/*/package.json'])
+      live(['git', 'add', '*/*/CHANGELOG.md', '*/*/package.json'])
       const commitCode = live([
         'git',
         'commit',
         '-m',
-        `release: ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`
+        `${commitType}: ${commitTag} ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`
       ])
       if (commitCode !== 0) {
         exit()
