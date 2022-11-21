@@ -5,15 +5,36 @@ import shell from 'shelljs'
 import consola from 'consola'
 import chalk from 'chalk'
 import jsonfile from 'jsonfile'
-import { ROOT, PACKAGES, SPARK_JSON, ROOT_PACKAGE } from '../common/constans'
+import yaml from 'js-yaml'
+import { ROOT, PACKAGES, SPARK_JSON, ROOT_PACKAGE, PNPM_WORKSPACE } from '../common/constans'
 
-async function getFolders(packages: string[] | string = '*'): Promise<string[]> {
-  let folders = await glob.sync('packages/*')
+// Get workspace folder, default is 'packages'
+async function getFolders(packages: string[] | string = '*'): Promise<any[]> {
+  let folders: string[] = []
+  try {
+    const pnpmWorkspace = yaml.load(fs.readFileSync(PNPM_WORKSPACE, 'utf8'))
+    let wPackages = pnpmWorkspace.packages
+    
+    wPackages = wPackages.map(wp => {
+      return wp.split('/')[0] + '/*'
+    })
+
+    await Promise.all(
+      wPackages.map(async (wp) => {
+        const wFolders = await glob.sync(wp)
+        folders = folders.concat(wFolders)
+      }) 
+    )
+  } catch {
+    folders = await glob.sync('packages/*')
+  }
+
   if (packages === '*') {
     return folders
   }
 
-  const _folders: string[] = await Promise.all(
+  // All packages match the packages of (spark.json -> packages)
+  const _folders = await Promise.all(
     folders.map(async (folder) => {
       if (!(await fs.lstat(folder)).isDirectory()) return null
 
@@ -34,6 +55,7 @@ export function formatStdout(stdout: string): string {
   return stdout.trim().replace('\n', '')
 }
 
+// Get all packages
 export async function getPkgs(): Promise<object[]> {
   const folders = await getFolders()
   const pkgs = await Promise.all(

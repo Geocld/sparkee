@@ -9,6 +9,7 @@ specifiers:
   fs-extra: ^10.1.0
   glob: ^8.0.3
   inquirer: ^8.2.4
+  js-yaml: ^4.1.0
   jsonfile: ^6.1.0
   rimraf: ^3.0.2
   semver: ^7.3.7
@@ -23,6 +24,7 @@ dependencies:
   fs-extra: 10.1.0
   glob: 8.0.3
   inquirer: 8.2.4
+  js-yaml: 4.1.0
   jsonfile: 6.1.0
   rimraf: 3.0.2
   semver: 7.3.7
@@ -120,6 +122,10 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       color-convert: 2.0.1
+    dev: false
+
+  /argparse/2.0.1:
+    resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
     dev: false
 
   /array-ify/1.0.0:
@@ -762,6 +768,13 @@ packages:
 
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
+    dev: false
+
+  /js-yaml/4.1.0:
+    resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
+    hasBin: true
+    dependencies:
+      argparse: 2.0.1
     dev: false
 
   /json-parse-better-errors/1.0.2:

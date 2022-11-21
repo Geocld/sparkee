@@ -9,3 +9,4 @@ function pathResolve(p: string): string {
 export const SPARK_JSON = pathResolve('spark.json')
 export const PACKAGES = pathResolve('packages')
 export const ROOT_PACKAGE = pathResolve('package.json')
+export const PNPM_WORKSPACE = pathResolve('pnpm-workspace.yaml')
