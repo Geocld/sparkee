@@ -1,3 +1,10 @@
+### 1.1.2 (2022-11-21)
+
+
+### Features
+
+* support packages from pnpm-workspace ([64d6626](https://github.com/Geocld/sparkee/commit/64d6626b67f09341c104307d9b8f45632aaba031))
+
 ### 1.1.1 (2022-09-09)
 
 
