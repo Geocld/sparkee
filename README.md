@@ -31,10 +31,14 @@ your-repo/
   package.json
   packages/
     package-1/
+      src/
       package.json
     package-2/
+      src/
       package.json
 ```
+
+It will track file changes inside the packages `src` folders and `package.json` files.
 
 ### Installation
 
