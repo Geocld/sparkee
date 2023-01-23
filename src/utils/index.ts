@@ -5,14 +5,15 @@ import shell from 'shelljs'
 import consola from 'consola'
 import chalk from 'chalk'
 import jsonfile from 'jsonfile'
-import yaml from 'js-yaml'
+import readYamlFile from 'read-yaml-file'
 import { ROOT, SPARK_JSON, ROOT_PACKAGE, PNPM_WORKSPACE } from '../common/constans'
+import type { PnpmWorkspace } from '../types'
 
 // Get workspace folder, default is 'packages'
 async function getFolders(packages: string[] | string = '*'): Promise<any[]> {
   let folders: string[] = []
   try {
-    const pnpmWorkspace = yaml.load(fs.readFileSync(PNPM_WORKSPACE, 'utf8'))
+    const pnpmWorkspace = await readYamlFile<PnpmWorkspace>(fs.readFileSync(PNPM_WORKSPACE, 'utf8'))
     let wPackages = pnpmWorkspace.packages
     
     wPackages = wPackages.map(wp => {
