@@ -61,7 +61,7 @@ export function formatStdout(stdout: string): string {
 
 // Get all packages
 export async function getPkgs(): Promise<object[]> {
-  const folders = await getFolders()
+  const folders: string[] = await getFolders()
   const pkgs = await Promise.all(
     folders.map(async (folder) => {
       if (!(await fs.lstat(folder)).isDirectory()) return null
@@ -93,7 +93,7 @@ export function step(msg: string) {
 }
 
 export async function getChangedPackages(force: boolean = false): Promise<any[]> {  
-  let lastTag
+  let lastTag: string
 
   // get packages of spark.json
   if (!fs.existsSync(SPARK_JSON)) {
