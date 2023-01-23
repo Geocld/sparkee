@@ -38,7 +38,7 @@ async function getFolders(packages: string[] | string = '*'): Promise<any[]> {
     folders.map(async (folder) => {
       if (!(await fs.lstat(folder)).isDirectory()) return null
 
-      const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
+      const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json'), 'utf-8'))
       if (packages.indexOf(pkg.name) === -1) return null
       return folder
     })
@@ -62,7 +62,7 @@ export async function getPkgs(): Promise<object[]> {
     folders.map(async (folder) => {
       if (!(await fs.lstat(folder)).isDirectory()) return null
 
-      const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
+      const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json'), 'utf-8'))
       return pkg
     })
   )
@@ -128,7 +128,7 @@ export async function getChangedPackages(force: boolean = false): Promise<any[]>
 
     const pkgs = await Promise.all(
       folders.map(async (folder) => {
-        const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
+        const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json'), 'utf-8'))
         const { stdout: hasChanges } = await exec(`git diff ${lastTag} -- ${join(folder, 'src')} ${join(folder, 'package.json')}`)
         if (force || hasChanges) { // force mode return all packages
           return {
