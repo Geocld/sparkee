@@ -6,13 +6,13 @@ import live from 'shelljs-live'
 import conventionalChangelog from 'conventional-changelog'
 import { ROOT } from '../common/constans'
 import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
-import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, readSpkfile } from '../utils'
+import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, getSparkeeConfig } from '../utils'
 
 // publish package, you can publish all or publish single package.
 
 async function generateChangeLog(pkg, singleRepo = false) {
   const { name, path } = pkg
-  const { logPresetTypes } = await readSpkfile()
+  const { logPresetTypes } = await getSparkeeConfig()
   if (logPresetTypes && !Array.isArray(logPresetTypes)) {
     console.error(
       chalk.red(`${chalk.white('[logPresetTypes]')} must be Array, you can refer to ${chalk.green('https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md')}.`)
@@ -63,7 +63,7 @@ async function generateChangeLog(pkg, singleRepo = false) {
 }
 
 async function publish(force: boolean = false, noPublish: boolean = false) {
-  const { logCommit } = await readSpkfile()
+  const { logCommit } = await getSparkeeConfig()
 
   const { stdout: beforeChanges } = await exec('git diff')
   const { stdout: beforeUntrackedFile } = await exec('git ls-files --others --exclude-standard')
@@ -78,7 +78,7 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     exit()
   }
 
-  const { singleRepo = false, moduleManager = 'pnpm' } = await readSpkfile()
+  const { singleRepo = false, moduleManager = 'pnpm' } = await getSparkeeConfig()
 
   let pickedPackages
   if (singleRepo) {

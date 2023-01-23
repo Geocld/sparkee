@@ -1,11 +1,11 @@
 import consola from 'consola'
 import live from 'shelljs-live'
-import { exit, readSpkfile, readRootPKg, getPkgs } from '../utils'
+import { exit, getSparkeeConfig, readRootPKg, getPkgs } from '../utils'
 import { promptSelect } from '../common/prompt'
 
 // Run the script of package
 async function run() {
-  const { singleRepo, moduleManager='pnpm' } = await readSpkfile()
+  const { singleRepo, moduleManager='pnpm' } = await getSparkeeConfig()
   let scripts
   let pickedPackage
   if (singleRepo) {

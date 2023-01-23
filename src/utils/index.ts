@@ -8,7 +8,7 @@ import chalk from 'chalk'
 import jsonfile from 'jsonfile'
 import readYamlFile from 'read-yaml-file'
 import { ROOT, SPARK_JSON, ROOT_PACKAGE, PNPM_WORKSPACE } from '../common/constans'
-import type { PnpmWorkspace } from '../types'
+import type { PnpmWorkspace, SparkeeConfig } from '../types'
 
 const glob = promisify(globStandard);
 
@@ -182,9 +182,9 @@ export async function runTaskSync(tasks: Function[]): Promise<any[]> {
 	return results
 }
 
-export async function readSpkfile() {
-  const configs = await jsonfile.readFile(SPARK_JSON)
-  return configs
+export async function getSparkeeConfig(): Promise<SparkeeConfig> {
+  const config = await jsonfile.readFile(SPARK_JSON) as SparkeeConfig
+  return config
 }
 
 export async function readRootPKg() {
