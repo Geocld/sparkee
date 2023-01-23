@@ -1,4 +1,4 @@
-import inquirer, { ListChoiceOptions, Question } from 'inquirer'
+import inquirer, { ListChoiceOptions } from 'inquirer'
 import consola from 'consola'
 
 export async function promptConfirm(message: string): Promise<boolean> {

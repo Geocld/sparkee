@@ -1,7 +1,6 @@
 import consola from 'consola'
-import chalk from 'chalk'
 import live from 'shelljs-live'
-import { exec, exit, readSpkfile, readRootPKg, getPkgs } from '../utils'
+import { exit, readSpkfile, readRootPKg, getPkgs } from '../utils'
 import { promptSelect } from '../common/prompt'
 
 // Run the script of package

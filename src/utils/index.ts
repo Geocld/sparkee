@@ -6,7 +6,7 @@ import consola from 'consola'
 import chalk from 'chalk'
 import jsonfile from 'jsonfile'
 import yaml from 'js-yaml'
-import { ROOT, PACKAGES, SPARK_JSON, ROOT_PACKAGE, PNPM_WORKSPACE } from '../common/constans'
+import { ROOT, SPARK_JSON, ROOT_PACKAGE, PNPM_WORKSPACE } from '../common/constans'
 
 // Get workspace folder, default is 'packages'
 async function getFolders(packages: string[] | string = '*'): Promise<any[]> {

@@ -7,7 +7,6 @@ import conventionalChangelog from 'conventional-changelog'
 import { ROOT } from '../common/constans'
 import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
 import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, readSpkfile } from '../utils'
-import { rejects } from 'assert'
 
 // publish package, you can publish all or publish single package.
 
