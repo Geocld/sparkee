@@ -1,6 +1,7 @@
 import { join } from 'path'
+import { promisify } from 'util'
 import fs from 'fs-extra'
-import glob from 'glob'
+import globStandard from 'glob'
 import shell from 'shelljs'
 import consola from 'consola'
 import chalk from 'chalk'
@@ -8,6 +9,8 @@ import jsonfile from 'jsonfile'
 import readYamlFile from 'read-yaml-file'
 import { ROOT, SPARK_JSON, ROOT_PACKAGE, PNPM_WORKSPACE } from '../common/constans'
 import type { PnpmWorkspace } from '../types'
+
+const glob = promisify(globStandard);
 
 // Get workspace folder, default is 'packages'
 async function getFolders(packages: string[] | string = '*'): Promise<any[]> {
@@ -22,12 +25,12 @@ async function getFolders(packages: string[] | string = '*'): Promise<any[]> {
 
     await Promise.all(
       wPackages.map(async (wp) => {
-        const wFolders = await glob.sync(wp)
+        const wFolders = await glob(wp)
         folders = folders.concat(wFolders)
       }) 
     )
   } catch {
-    folders = await glob.sync('packages/*')
+    folders = await glob('packages/*')
   }
 
   if (packages === '*') {
