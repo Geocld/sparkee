@@ -80,7 +80,7 @@ export async function getPkgsProperty(property: string): Promise<any[]> {
   return properties.filter(p => p)
 }
 
-export function exec(cmd: string, silent: boolean = true): Promise<{ stdout: string, stderr: string, code: number }> {
+export async function exec(cmd: string, silent: boolean = true): Promise<{ stdout: string, stderr: string, code: number }> {
   return shell.exec(cmd, { silent })
 }
 
