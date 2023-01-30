@@ -1,9 +1,9 @@
 import fs from 'fs-extra'
 import consola from 'consola'
 import jsonfile from 'jsonfile'
-import { ROOT, SPARK_JSON, PACKAGES } from '../common/constans'
+import { SPARK_JSON } from '../common/constans'
 import { promptConfirm, promptCheckbox, promptSelect } from '../common/prompt'
-import { getPkgs, getPkgsProperty, exit } from '../utils'
+import { getPkgsProperty, exit } from '../utils'
 
 enum RepoType {
   SINGLEREPO = 'singleRepo',

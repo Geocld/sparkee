@@ -1,18 +1,28 @@
 import { join } from 'path'
+import { promisify } from 'util'
 import fs from 'fs-extra'
-import glob from 'glob'
+import globStandard from 'glob'
 import shell from 'shelljs'
 import consola from 'consola'
 import chalk from 'chalk'
 import jsonfile from 'jsonfile'
-import yaml from 'js-yaml'
-import { ROOT, PACKAGES, SPARK_JSON, ROOT_PACKAGE, PNPM_WORKSPACE } from '../common/constans'
+import readYamlFile from 'read-yaml-file'
+import { ROOT, SPARK_JSON, ROOT_PACKAGE, PNPM_WORKSPACE } from '../common/constans'
+import type { PackageJson, PnpmWorkspace, SparkeeConfig, WorkspacePackages } from '../types'
+
+const glob = promisify(globStandard)
+
+// https://github.com/microsoft/TypeScript/issues/16069#issuecomment-369374214
+export function isNotNullOrUndefined<T extends Object>(input: null | undefined | T): input is T {
+  return input != null
+}
 
 // Get workspace folder, default is 'packages'
-async function getFolders(packages: string[] | string = '*'): Promise<any[]> {
+async function getWorkspaceFolders(packages: string[] | string = '*'): Promise<string[]> {
   let folders: string[] = []
+
   try {
-    const pnpmWorkspace = yaml.load(fs.readFileSync(PNPM_WORKSPACE, 'utf8'))
+    const pnpmWorkspace = await readYamlFile<PnpmWorkspace>(fs.readFileSync(PNPM_WORKSPACE, 'utf8'))
     let wPackages = pnpmWorkspace.packages
     
     wPackages = wPackages.map(wp => {
@@ -21,12 +31,12 @@ async function getFolders(packages: string[] | string = '*'): Promise<any[]> {
 
     await Promise.all(
       wPackages.map(async (wp) => {
-        const wFolders = await glob.sync(wp)
+        const wFolders = await glob(wp)
         folders = folders.concat(wFolders)
       }) 
     )
   } catch {
-    folders = await glob.sync('packages/*')
+    folders = await glob('packages/*')
   }
 
   if (packages === '*') {
@@ -38,13 +48,13 @@ async function getFolders(packages: string[] | string = '*'): Promise<any[]> {
     folders.map(async (folder) => {
       if (!(await fs.lstat(folder)).isDirectory()) return null
 
-      const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
+      const pkg = await getPackageJson(folder)
       if (packages.indexOf(pkg.name) === -1) return null
       return folder
     })
   )
 
-  return _folders.filter(f => f)
+  return _folders.filter(isNotNullOrUndefined)
 }
 
 export function exit() {
@@ -55,24 +65,25 @@ export function formatStdout(stdout: string): string {
   return stdout.trim().replace('\n', '')
 }
 
-// Get all packages
-export async function getPkgs(): Promise<object[]> {
-  const folders = await getFolders()
+// Get all workspace packages
+export async function getWorkspacePackages(): Promise<PackageJson[]> {
+  const folders: string[] = await getWorkspaceFolders()
   const pkgs = await Promise.all(
     folders.map(async (folder) => {
       if (!(await fs.lstat(folder)).isDirectory()) return null
 
-      const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
+      const pkg = await getPackageJson(folder)
       return pkg
     })
   )
 
-  return pkgs.filter(p => p)
+  return pkgs.filter(isNotNullOrUndefined)
 }
 
-export async function getPkgsProperty(property: string): Promise<any[]> {
-  const pkgs = await getPkgs()
-  const properties = pkgs.map(pkg => {
+// Get a property from all workspace packages
+export async function getPkgsProperty(property: string): Promise<Array<keyof PackageJson>> {
+  const pkgs = await getWorkspacePackages()
+  const properties: Array<keyof PackageJson> = pkgs.map(pkg => {
     if (!pkg[property]) return null
     return pkg[property]
   })
@@ -80,7 +91,7 @@ export async function getPkgsProperty(property: string): Promise<any[]> {
   return properties.filter(p => p)
 }
 
-export function exec(cmd: string, silent: boolean = true): Promise<{ stdout: string, stderr: string, code: number }> {
+export async function exec(cmd: string, silent: boolean = true): Promise<{ stdout: string, stderr: string, code: number }> {
   return shell.exec(cmd, { silent })
 }
 
@@ -88,15 +99,15 @@ export function step(msg: string) {
   consola.log(chalk.cyan(msg))
 }
 
-export async function getChangedPackages(force: boolean = false): Promise<any[]> {  
-  let lastTag
+export async function getChangedPackages(force: boolean = false): Promise<WorkspacePackages> {  
+  let lastTag: string
 
   // get packages of spark.json
   if (!fs.existsSync(SPARK_JSON)) {
     consola.error('`spark.json` was not found, please try to run `sparkee init` to init repo.')
     exit()
   }
-  const sparkConfig = await jsonfile.readFile(SPARK_JSON)
+  const sparkConfig = await getSparkeeConfig()
   const { singleRepo, packages } =  sparkConfig
 
   const { stdout: tag, stderr } = await exec('git describe --tags --abbrev=0')
@@ -112,23 +123,25 @@ export async function getChangedPackages(force: boolean = false): Promise<any[]>
   if (singleRepo) {
     consola.warn('You will publish as singleRepo.')
     const { stdout: hasChanges } = await exec(`git diff ${lastTag}`)
-    const pkg = await jsonfile.readFile(ROOT_PACKAGE)
+    const pkg = await getPackageJson()
     if (!force && !hasChanges) {
       return []
     }
-    return [{
-      path: ROOT,
-      name: pkg.name,
-      version: pkg.version,
-      pkg,
-    }]
+    return [
+      {
+        path: ROOT,
+        name: pkg.name,
+        version: pkg.version,
+        pkg,
+      }
+    ]
   } else { // monorepo
     // get folders match managed packages
-    const folders = await getFolders(packages)
+    const folders: string[] = await getWorkspaceFolders(packages)
 
     const pkgs = await Promise.all(
       folders.map(async (folder) => {
-        const pkg = JSON.parse(await fs.readFile(join(folder, 'package.json')))
+        const pkg = await getPackageJson(folder)
         const { stdout: hasChanges } = await exec(`git diff ${lastTag} -- ${join(folder, 'src')} ${join(folder, 'package.json')}`)
         if (force || hasChanges) { // force mode return all packages
           return {
@@ -141,20 +154,18 @@ export async function getChangedPackages(force: boolean = false): Promise<any[]>
       })
     )
     
-    return pkgs.filter(p => p)
+    return pkgs.filter(isNotNullOrUndefined)
   }
 }
 
-type Package= {
-  name: string,
-  path: string,
-  version: string,
-  pkg: any
-}
-
-export async function updateVersions(packageList: Package[]): Promise<any> {
+export async function updateVersions(packageList: WorkspacePackages): Promise<void[]> {
   return Promise.all(
     packageList.map(({ pkg, version, path }) => {
+      if (!pkg) {
+        consola.error('Packages can not be empty!')
+        return exit()
+      }
+
       pkg.version = version
       const content = JSON.stringify(pkg, null, 2) + '\n'
       return fs.writeFile(join(path, 'package.json'), content)
@@ -169,7 +180,7 @@ export async function runTaskSync(tasks: Function[]): Promise<any[]> {
 		}
 	}
 
-	const results:Function[] = []
+	const results: Function[] = []
 
 	for (const task of tasks) {
 		results.push(await task()) // eslint-disable-line no-await-in-loop
@@ -178,12 +189,12 @@ export async function runTaskSync(tasks: Function[]): Promise<any[]> {
 	return results
 }
 
-export async function readSpkfile() {
-  const configs = await jsonfile.readFile(SPARK_JSON)
-  return configs
+export async function getSparkeeConfig(): Promise<SparkeeConfig> {
+  const config = await jsonfile.readFile(SPARK_JSON) as SparkeeConfig
+  return config
 }
 
-export async function readRootPKg() {
-  const pkg = await jsonfile.readFile(ROOT_PACKAGE)
+export async function getPackageJson(packageJsonPath?: string): Promise<PackageJson> {
+  const pkg = await jsonfile.readFile(packageJsonPath ? join(packageJsonPath, 'package.json') : ROOT_PACKAGE) as PackageJson
   return pkg
 }

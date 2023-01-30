@@ -1,3 +1,4 @@
+import type { PackageJson, WorkspacePackage, WorkspacePackageWithoutPkg } from './../types';
 import fs from 'fs'
 import consola from 'consola'
 import chalk from 'chalk'
@@ -6,14 +7,14 @@ import live from 'shelljs-live'
 import conventionalChangelog from 'conventional-changelog'
 import { ROOT } from '../common/constans'
 import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
-import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, readSpkfile } from '../utils'
-import { rejects } from 'assert'
+import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, getSparkeeConfig } from '../utils'
 
 // publish package, you can publish all or publish single package.
 
-async function generateChangeLog(pkg, singleRepo = false) {
+async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = false) {
   const { name, path } = pkg
-  const { logPresetTypes } = await readSpkfile()
+  const { logPresetTypes } = await getSparkeeConfig()
+  
   if (logPresetTypes && !Array.isArray(logPresetTypes)) {
     console.error(
       chalk.red(`${chalk.white('[logPresetTypes]')} must be Array, you can refer to ${chalk.green('https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md')}.`)
@@ -51,7 +52,7 @@ async function generateChangeLog(pkg, singleRepo = false) {
       },
       undefined,
       undefined
-    ).on('error', err => {
+    ).on('error', (err: Error) => {
       consola.error(err)
       process.exit(1)
     })
@@ -64,10 +65,11 @@ async function generateChangeLog(pkg, singleRepo = false) {
 }
 
 async function publish(force: boolean = false, noPublish: boolean = false) {
-  const { logCommit } = await readSpkfile()
+  const { logCommit } = await getSparkeeConfig()
 
   const { stdout: beforeChanges } = await exec('git diff')
   const { stdout: beforeUntrackedFile } = await exec('git ls-files --others --exclude-standard')
+
   if (beforeChanges || beforeUntrackedFile) {
     consola.warn('Please commit your change before publish.')
     exit()
@@ -79,9 +81,10 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     exit()
   }
 
-  const { singleRepo = false, moduleManager = 'pnpm' } = await readSpkfile()
+  const { singleRepo = false, moduleManager = 'pnpm' } = await getSparkeeConfig()
 
-  let pickedPackages
+  let pickedPackages: string[]
+
   if (singleRepo) {
     pickedPackages = [changedPackages[0].name]
   } else {
@@ -101,6 +104,8 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
 
   const pkgWithVersions = await runTaskSync(
     packagesToRelease.map(({ name, path, pkg }) => async () => {
+      if (!pkg) return
+      
       let { version } = pkg
 
       const prerelease = semver.prerelease(version)
@@ -116,7 +121,7 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
       const choices = versionIncrements.map(i => `${i}: ${name} (${semver.inc(version, i, preId)})`).concat(['custom'])
 
       const release = await promptSelect(`Select release type for ${chalk.bold.green(name)}`, {
-        choices: versionIncrements.map(i => `${i}: ${name} (${semver.inc(version, i, preId)})`).concat(['custom'])
+        choices
       })
 
       if (release === 'custom') {
@@ -153,7 +158,7 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     await generateChangeLog(
       {
         name: changedPackages[0].name,
-        path: ROOT
+        path: ROOT,
       },
       singleRepo
     )
@@ -180,13 +185,13 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     }
 
     step('\nCreating tags...')
-    const tagCode = live(['git', 'tag', newVersion])
+    const tagCode = live(['git', 'tag', newVersion!])
     if (tagCode !== 0) {
       exit()
     }
 
     step('\nPushing to Git...')
-    const pushCode = live(['git', 'push', 'origin', newVersion])
+    const pushCode = live(['git', 'push', 'origin', newVersion!])
 
     if (pushCode !== 0) {
       exit()
