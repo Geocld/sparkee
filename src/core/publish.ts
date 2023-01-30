@@ -1,4 +1,4 @@
-import type { PackageJson, WorkspacePackage, WorkspacePackageWithoutPkg } from './../types';
+import type { PackageJson, WorkspacePackage, WorkspacePackageWithoutPkg } from './../types'
 import fs from 'fs'
 import consola from 'consola'
 import chalk from 'chalk'
@@ -14,10 +14,14 @@ import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, getS
 async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = false) {
   const { name, path } = pkg
   const { logPresetTypes } = await getSparkeeConfig()
-  
+
   if (logPresetTypes && !Array.isArray(logPresetTypes)) {
     console.error(
-      chalk.red(`${chalk.white('[logPresetTypes]')} must be Array, you can refer to ${chalk.green('https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md')}.`)
+      chalk.red(
+        `${chalk.white('[logPresetTypes]')} must be Array, you can refer to ${chalk.green(
+          'https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md'
+        )}.`
+      )
     )
     process.exit(1)
   }
@@ -37,18 +41,18 @@ async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = f
             { type: 'test', section: 'Testing' },
             { type: 'docs', section: 'Documentation' },
             { type: 'build', hidden: true },
-            { type: 'style', hidden: true }
-          ]
+            { type: 'style', hidden: true },
+          ],
         },
         pkg: {
-          path // The location of your "package.json".
+          path, // The location of your "package.json".
         },
-        lernaPackage: name
+        lernaPackage: name,
       },
       undefined,
       {
         // commit-path
-        path
+        path,
       },
       undefined,
       undefined
@@ -89,11 +93,11 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     pickedPackages = [changedPackages[0].name]
   } else {
     pickedPackages = await promptCheckbox('What packages do you want to publish?', {
-      choices: changedPackages.map(pkg => pkg.name)
+      choices: changedPackages.map((pkg) => pkg.name),
     })
   }
 
-  const packagesToRelease = changedPackages.filter(pkg => pickedPackages.includes(pkg.name))
+  const packagesToRelease = changedPackages.filter((pkg) => pickedPackages.includes(pkg.name))
 
   if (!packagesToRelease.length) {
     consola.warn('Release packages cannot be empty.')
@@ -103,46 +107,49 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
   consola.log(`Ready to release ${packagesToRelease.map(({ name }) => chalk.bold.white(name)).join(', ')}`)
 
   const pkgWithVersions = await runTaskSync(
-    packagesToRelease.map(({ name, path, pkg }) => async () => {
-      if (!pkg) return
-      
-      let { version } = pkg
+    packagesToRelease.map(({ name, path, pkg }) =>
+      async () => {
+        if (!pkg) return
 
-      const prerelease = semver.prerelease(version)
-      const preId = prerelease && prerelease[0]
+        let { version } = pkg
 
-      const versionIncrements = [
-        'patch',
-        'minor',
-        'major',
-        ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : [])
-      ]
+        const prerelease = semver.prerelease(version)
+        const preId = prerelease?.[0]
 
-      const choices = versionIncrements.map(i => `${i}: ${name} (${semver.inc(version, i, preId)})`).concat(['custom'])
+        const versionIncrements = [
+          'patch',
+          'minor',
+          'major',
+          ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : []),
+        ]
 
-      const release = await promptSelect(`Select release type for ${chalk.bold.green(name)}`, {
-        choices
+        const choices = versionIncrements
+          .map((i) => `${i}: ${name} (${semver.inc(version, i, preId)})`)
+          .concat(['custom'])
+
+        const release = await promptSelect(`Select release type for ${chalk.bold.green(name)}`, {
+          choices,
+        })
+
+        if (release === 'custom') {
+          version = await promptInput(`Input custom version (${chalk.bold.green(name)})`)
+        } else {
+          const match = release.match(/\((.*)\)/)
+          version = match ? match[1] : ''
+        }
+
+        if (!semver.valid(version)) {
+          consola.error(`invalid target version: ${version}`)
+          exit()
+        }
+
+        return { name, path, version, pkg }
       })
-
-      if (release === 'custom') {
-        version = await promptInput(`Input custom version (${chalk.bold.green(name)})`)
-      } else {
-        const match = release.match(/\((.*)\)/)
-        version = match ? match[1] : ''
-      }
-
-      if (!semver.valid(version)) {
-        consola.error(`invalid target version: ${version}`)
-        exit()
-      }
-
-      return { name, path, version, pkg }
-    })
   )
 
   const isReleaseConfirmed = await promptConfirm(
     `Releasing \n${pkgWithVersions
-      .map(({ name, version }) => `  · ${chalk.white(name)}: ${chalk.yellow.bold('v' + version)}`)
+      .map(({ name, version }) => `  · ${chalk.white(name)}: ${chalk.yellow.bold(`v${version}`)}`)
       .join('\n')}\nConfirm?`
   )
 
@@ -164,22 +171,13 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     )
 
     step('\nBuilding package...')
-    live([
-      moduleManager,
-      'run',
-      'build'
-    ])
+    live([moduleManager, 'run', 'build'])
 
     const { version: newVersion } = pkgWithVersions[0]
 
     step('\nCommitting changes...')
     live(['git', 'add', '.'])
-    const commitCode = live([
-      'git',
-      'commit',
-      '-m',
-      `release: ${newVersion}`
-    ])
+    const commitCode = live(['git', 'commit', '-m', `release: ${newVersion}`])
     if (commitCode !== 0) {
       exit()
     }
@@ -204,12 +202,9 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
 
     // TODO: rollback if publish fail
     step('Publishing package...')
-    live([
-      moduleManager,
-      'publish'
-    ])
-
-  } else { // monorepo
+    live([moduleManager, 'publish'])
+  } else {
+    // monorepo
 
     step('\nGenerating changelogs...')
     let filter = ''
@@ -239,7 +234,7 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
         'git',
         'commit',
         '-m',
-        `${commitType}: ${commitTag} ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`
+        `${commitType}: ${commitTag} ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`,
       ])
       if (commitCode !== 0) {
         exit()
