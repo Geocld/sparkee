@@ -6,18 +6,18 @@ import { promptSelect } from '../common/prompt'
 
 // Run the script of package
 async function run() {
-  const { singleRepo, moduleManager='pnpm' } = await readSpkfile()
+  const { singleRepo, moduleManager = 'pnpm' } = await readSpkfile()
   let scripts
   let pickedPackage
   if (singleRepo) {
     const pkg = await readRootPKg()
     scripts = pkg.scripts
   } else {
-    const packages = await getPkgs() as Record<string, any>
+    const packages = (await getPkgs()) as Record<string, any>
     pickedPackage = await promptSelect('What packages do you want to run?', {
-      choices: packages.map(pkg => pkg.name)
+      choices: packages.map((pkg) => pkg.name),
     })
-    packages.forEach(pkg => {
+    packages.forEach((pkg) => {
       if (pkg.name === pickedPackage) {
         scripts = pkg.scripts
       }
@@ -31,8 +31,8 @@ async function run() {
 
   const entriesScripts = Object.entries(scripts)
 
-  const choiceScript = await promptSelect(`Please select script:`, {
-    choices: entriesScripts.map(s => `${s[0]} -> ${s[1]}`)
+  const choiceScript = await promptSelect('Please select script:', {
+    choices: entriesScripts.map((s) => `${s[0]} -> ${s[1]}`),
   })
   let command = choiceScript.split('->')[0]
   command = command.replace(/\s/g, '')
@@ -42,7 +42,6 @@ async function run() {
   } else {
     live(['pnpm', '--filter', pickedPackage, 'run', command])
   }
-  
 }
 
 export default run

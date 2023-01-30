@@ -6,7 +6,15 @@ import live from 'shelljs-live'
 import conventionalChangelog from 'conventional-changelog'
 import { ROOT } from '../common/constans'
 import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
-import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, readSpkfile } from '../utils'
+import {
+  exec,
+  exit,
+  step,
+  getChangedPackages,
+  runTaskSync,
+  updateVersions,
+  readSpkfile,
+} from '../utils'
 import { rejects } from 'assert'
 
 // publish package, you can publish all or publish single package.
@@ -16,7 +24,11 @@ async function generateChangeLog(pkg, singleRepo = false) {
   const { logPresetTypes } = await readSpkfile()
   if (logPresetTypes && !Array.isArray(logPresetTypes)) {
     console.error(
-      chalk.red(`${chalk.white('[logPresetTypes]')} must be Array, you can refer to ${chalk.green('https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md')}.`)
+      chalk.red(
+        `${chalk.white('[logPresetTypes]')} must be Array, you can refer to ${chalk.green(
+          'https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md'
+        )}.`
+      )
     )
     process.exit(1)
   }
@@ -36,27 +48,30 @@ async function generateChangeLog(pkg, singleRepo = false) {
             { type: 'test', section: 'Testing' },
             { type: 'docs', section: 'Documentation' },
             { type: 'build', hidden: true },
-            { type: 'style', hidden: true }
-          ]
+            { type: 'style', hidden: true },
+          ],
         },
         pkg: {
-          path // The location of your "package.json".
+          path, // The location of your "package.json".
         },
-        lernaPackage: name
+        lernaPackage: name,
       },
       undefined,
       {
         // commit-path
-        path
+        path,
       },
       undefined,
       undefined
-    ).on('error', err => {
+    ).on('error', (err) => {
       consola.error(err)
       process.exit(1)
     })
 
-    const outStream = fs.createWriteStream(`${path}/CHANGELOG.md`, singleRepo ? undefined : { flags: 'a' })
+    const outStream = fs.createWriteStream(
+      `${path}/CHANGELOG.md`,
+      singleRepo ? undefined : { flags: 'a' }
+    )
     changelogStream.pipe(outStream)
 
     outStream.on('finish', resolve)
@@ -75,7 +90,9 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
 
   const changedPackages = await getChangedPackages(force)
   if (!changedPackages.length) {
-    consola.warn('No packages have changed since last release, you can run `--force` to publish all packages.')
+    consola.warn(
+      'No packages have changed since last release, you can run `--force` to publish all packages.'
+    )
     exit()
   }
 
@@ -86,58 +103,65 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     pickedPackages = [changedPackages[0].name]
   } else {
     pickedPackages = await promptCheckbox('What packages do you want to publish?', {
-      choices: changedPackages.map(pkg => pkg.name)
+      choices: changedPackages.map((pkg) => pkg.name),
     })
   }
 
-  const packagesToRelease = changedPackages.filter(pkg => pickedPackages.includes(pkg.name))
+  const packagesToRelease = changedPackages.filter((pkg) => pickedPackages.includes(pkg.name))
 
   if (!packagesToRelease.length) {
     consola.warn('Release packages cannot be empty.')
     exit()
   }
 
-  consola.log(`Ready to release ${packagesToRelease.map(({ name }) => chalk.bold.white(name)).join(', ')}`)
+  consola.log(
+    `Ready to release ${packagesToRelease.map(({ name }) => chalk.bold.white(name)).join(', ')}`
+  )
 
   const pkgWithVersions = await runTaskSync(
-    packagesToRelease.map(({ name, path, pkg }) => async () => {
-      let { version } = pkg
+    packagesToRelease.map(({ name, path, pkg }) =>
+      async () => {
+        let { version } = pkg
 
-      const prerelease = semver.prerelease(version)
-      const preId = prerelease && prerelease[0]
+        const prerelease = semver.prerelease(version)
+        const preId = prerelease?.[0]
 
-      const versionIncrements = [
-        'patch',
-        'minor',
-        'major',
-        ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : [])
-      ]
+        const versionIncrements = [
+          'patch',
+          'minor',
+          'major',
+          ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : []),
+        ]
 
-      const choices = versionIncrements.map(i => `${i}: ${name} (${semver.inc(version, i, preId)})`).concat(['custom'])
+        const choices = versionIncrements
+          .map((i) => `${i}: ${name} (${semver.inc(version, i, preId)})`)
+          .concat(['custom'])
 
-      const release = await promptSelect(`Select release type for ${chalk.bold.green(name)}`, {
-        choices: versionIncrements.map(i => `${i}: ${name} (${semver.inc(version, i, preId)})`).concat(['custom'])
+        const release = await promptSelect(`Select release type for ${chalk.bold.green(name)}`, {
+          choices: versionIncrements
+            .map((i) => `${i}: ${name} (${semver.inc(version, i, preId)})`)
+            .concat(['custom']),
+        })
+
+        if (release === 'custom') {
+          version = await promptInput(`Input custom version (${chalk.bold.green(name)})`)
+        } else {
+          const match = release.match(/\((.*)\)/)
+          version = match ? match[1] : ''
+        }
+
+        if (!semver.valid(version)) {
+          consola.error(`invalid target version: ${version}`)
+          exit()
+        }
+
+        return { name, path, version, pkg }
       })
-
-      if (release === 'custom') {
-        version = await promptInput(`Input custom version (${chalk.bold.green(name)})`)
-      } else {
-        const match = release.match(/\((.*)\)/)
-        version = match ? match[1] : ''
-      }
-
-      if (!semver.valid(version)) {
-        consola.error(`invalid target version: ${version}`)
-        exit()
-      }
-
-      return { name, path, version, pkg }
-    })
   )
 
   const isReleaseConfirmed = await promptConfirm(
     `Releasing \n${pkgWithVersions
-      .map(({ name, version }) => `  · ${chalk.white(name)}: ${chalk.yellow.bold('v' + version)}`)
+      .map(({ name, version }) => `  · ${chalk.white(name)}: ${chalk.yellow.bold(`v${version}`)}`)
       .join('\n')}\nConfirm?`
   )
 
@@ -153,28 +177,19 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     await generateChangeLog(
       {
         name: changedPackages[0].name,
-        path: ROOT
+        path: ROOT,
       },
       singleRepo
     )
 
     step('\nBuilding package...')
-    live([
-      moduleManager,
-      'run',
-      'build'
-    ])
+    live([moduleManager, 'run', 'build'])
 
     const { version: newVersion } = pkgWithVersions[0]
 
     step('\nCommitting changes...')
     live(['git', 'add', '.'])
-    const commitCode = live([
-      'git',
-      'commit',
-      '-m',
-      `release: ${newVersion}`
-    ])
+    const commitCode = live(['git', 'commit', '-m', `release: ${newVersion}`])
     if (commitCode !== 0) {
       exit()
     }
@@ -199,12 +214,9 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
 
     // TODO: rollback if publish fail
     step('Publishing package...')
-    live([
-      moduleManager,
-      'publish'
-    ])
-
-  } else { // monorepo
+    live([moduleManager, 'publish'])
+  } else {
+    // monorepo
 
     step('\nGenerating changelogs...')
     let filter = ''
@@ -234,7 +246,9 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
         'git',
         'commit',
         '-m',
-        `${commitType}: ${commitTag} ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`
+        `${commitType}: ${commitTag} ${pkgWithVersions
+          .map(({ name, version }) => `${name}@${version}`)
+          .join(' ')}`,
       ])
       if (commitCode !== 0) {
         exit()

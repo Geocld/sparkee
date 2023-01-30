@@ -7,7 +7,7 @@ import { getChangedPackages } from '../utils'
 enum Position {
   First,
   Normal,
-  Last
+  Last,
 }
 
 function printer(message: string) {
@@ -17,7 +17,7 @@ function printer(message: string) {
 function resolveDepsTree(packages) {
   let pkgMap = new Map()
   let versionMap = new Map()
-  packages.forEach(pkg => {
+  packages.forEach((pkg) => {
     const { name, version, dependencies } = pkg.pkg
     const _deps = new Set()
     versionMap.set(name, version)
@@ -37,10 +37,10 @@ function resolveDepsTree(packages) {
   })
 }
 
-function draw(dependency, prefix, state, pmap, versionMap) {  
+function draw(dependency, prefix, state, pmap, versionMap) {
   const dependencies = pmap.get(dependency)
   const nameChar = dependencies.size > 0 ? '┬' : '─'
-  let selfPrefix = prefix + (state === Position.Last ? '╰─' : '├─') + nameChar + ' '
+  let selfPrefix = `${prefix}${state === Position.Last ? '╰─' : '├─'}${nameChar} `
   let childPrefix = prefix + (state === Position.Last ? '  ' : '│ ')
 
   if (state === Position.First) {
@@ -62,8 +62,7 @@ async function info(tree: boolean = false) {
   if (singleRepo) {
     const { name, version } = await jsonfile.readFile(ROOT_PACKAGE)
     consola.log(
-      chalk.bold(
-    `Current package: ${chalk.green(name)} ${chalk.yellow.bold('v' + version)}`)
+      chalk.bold(`Current package: ${chalk.green(name)} ${chalk.yellow.bold(`v${version}`)}`)
     )
     return
   }
@@ -74,11 +73,13 @@ async function info(tree: boolean = false) {
   } else {
     consola.log(
       chalk.bold(
-    `Current monorepo packages:\n${
-      packages.map(
-        ({ name, version }) =>
-          `  · ${chalk.green(name)}: ${chalk.yellow.bold('v' + version)}`
-      ).join('\n')}`))
+        `Current monorepo packages:\n${packages
+          .map(
+            ({ name, version }) => `  · ${chalk.green(name)}: ${chalk.yellow.bold(`v${version}`)}`
+          )
+          .join('\n')}`
+      )
+    )
   }
 }
 
