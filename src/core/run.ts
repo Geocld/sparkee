@@ -7,7 +7,7 @@ import type { ScriptsMap, WorkspacePackages } from '../types'
 // Run the script of package
 async function run() {
   const { singleRepo, moduleManager = 'pnpm' } = await getSparkeeConfig()
-  
+
   let scripts: ScriptsMap = {}
   let pickedPackage
 
@@ -15,11 +15,11 @@ async function run() {
     const pkg = await getPackageJson()
     scripts = pkg.scripts || {}
   } else {
-    const packages = await getWorkspacePackages() as WorkspacePackages
+    const packages = (await getWorkspacePackages()) as WorkspacePackages
     pickedPackage = await promptSelect('What packages do you want to run?', {
-      choices: packages.map(pkg => pkg.name)
+      choices: packages.map((pkg) => pkg.name),
     })
-    packages.forEach(pkg => {
+    packages.forEach((pkg) => {
       if (pkg.name === pickedPackage) {
         scripts = pkg.scripts || {}
       }
@@ -33,8 +33,8 @@ async function run() {
 
   const entriesScripts = Object.entries(scripts)
 
-  const choiceScript = await promptSelect(`Please select script:`, {
-    choices: entriesScripts.map(s => `${s[0]} -> ${s[1]}`)
+  const choiceScript = await promptSelect('Please select script:', {
+    choices: entriesScripts.map((s) => `${s[0]} -> ${s[1]}`),
   })
   let command = choiceScript.split('->')[0]
   command = command.replace(/\s/g, '')
@@ -44,7 +44,6 @@ async function run() {
   } else {
     live(['pnpm', '--filter', pickedPackage, 'run', command])
   }
-  
 }
 
 export default run

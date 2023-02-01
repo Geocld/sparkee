@@ -24,16 +24,16 @@ async function getWorkspaceFolders(packages: string[] | string = '*'): Promise<s
   try {
     const pnpmWorkspace = await readYamlFile<PnpmWorkspace>(fs.readFileSync(PNPM_WORKSPACE, 'utf8'))
     let wPackages = pnpmWorkspace.packages
-    
-    wPackages = wPackages.map(wp => {
-      return wp.split('/')[0] + '/*'
+
+    wPackages = wPackages.map((wp) => {
+      return `${wp.split('/')[0]}/*`
     })
 
     await Promise.all(
       wPackages.map(async (wp) => {
         const wFolders = await glob(wp)
         folders = folders.concat(wFolders)
-      }) 
+      })
     )
   } catch {
     folders = await glob('packages/*')
@@ -83,15 +83,18 @@ export async function getWorkspacePackages(): Promise<PackageJson[]> {
 // Get a property from all workspace packages
 export async function getPkgsProperty(property: string): Promise<Array<keyof PackageJson>> {
   const pkgs = await getWorkspacePackages()
-  const properties: Array<keyof PackageJson> = pkgs.map(pkg => {
+  const properties: Array<keyof PackageJson> = pkgs.map((pkg) => {
     if (!pkg[property]) return null
     return pkg[property]
   })
 
-  return properties.filter(p => p)
+  return properties.filter((p) => p)
 }
 
-export async function exec(cmd: string, silent: boolean = true): Promise<{ stdout: string, stderr: string, code: number }> {
+export async function exec(
+  cmd: string,
+  silent: boolean = true
+): Promise<{ stdout: string; stderr: string; code: number }> {
   return shell.exec(cmd, { silent })
 }
 
@@ -99,7 +102,7 @@ export function step(msg: string) {
   consola.log(chalk.cyan(msg))
 }
 
-export async function getChangedPackages(force: boolean = false): Promise<WorkspacePackages> {  
+export async function getChangedPackages(force: boolean = false): Promise<WorkspacePackages> {
   let lastTag: string
 
   // get packages of spark.json
@@ -108,7 +111,7 @@ export async function getChangedPackages(force: boolean = false): Promise<Worksp
     exit()
   }
   const sparkConfig = await getSparkeeConfig()
-  const { singleRepo, packages } =  sparkConfig
+  const { singleRepo, packages } = sparkConfig
 
   const { stdout: tag, stderr } = await exec('git describe --tags --abbrev=0')
 
@@ -124,7 +127,7 @@ export async function getChangedPackages(force: boolean = false): Promise<Worksp
     consola.warn('You will publish as singleRepo.')
     const { stdout: hasChanges } = await exec(`git diff ${lastTag}`)
     const pkg = await getPackageJson()
-    if (!force && !hasChanges) {
+    if (!(force || hasChanges)) {
       return []
     }
     return [
@@ -133,17 +136,21 @@ export async function getChangedPackages(force: boolean = false): Promise<Worksp
         name: pkg.name,
         version: pkg.version,
         pkg,
-      }
+      },
     ]
-  } else { // monorepo
+  } else {
+    // monorepo
     // get folders match managed packages
     const folders: string[] = await getWorkspaceFolders(packages)
 
     const pkgs = await Promise.all(
       folders.map(async (folder) => {
         const pkg = await getPackageJson(folder)
-        const { stdout: hasChanges } = await exec(`git diff ${lastTag} -- ${join(folder, 'src')} ${join(folder, 'package.json')}`)
-        if (force || hasChanges) { // force mode return all packages
+        const { stdout: hasChanges } = await exec(
+          `git diff ${lastTag} -- ${join(folder, 'src')} ${join(folder, 'package.json')}`
+        )
+        if (force || hasChanges) {
+          // force mode return all packages
           return {
             path: folder,
             name: pkg.name,
@@ -153,7 +160,7 @@ export async function getChangedPackages(force: boolean = false): Promise<Worksp
         }
       })
     )
-    
+
     return pkgs.filter(isNotNullOrUndefined)
   }
 }
@@ -175,26 +182,28 @@ export async function updateVersions(packageList: WorkspacePackages): Promise<vo
 
 export async function runTaskSync(tasks: Function[]): Promise<any[]> {
   for (const task of tasks) {
-		if (typeof task !== 'function') {
-			throw new TypeError(`Expected task to be a \`Function\`, received \`${typeof task}\``)
-		}
-	}
+    if (typeof task !== 'function') {
+      throw new TypeError(`Expected task to be a \`Function\`, received \`${typeof task}\``)
+    }
+  }
 
-	const results: Function[] = []
+  const results: Function[] = []
 
-	for (const task of tasks) {
-		results.push(await task()) // eslint-disable-line no-await-in-loop
-	}
+  for (const task of tasks) {
+    results.push(await task()) // eslint-disable-line no-await-in-loop
+  }
 
-	return results
+  return results
 }
 
 export async function getSparkeeConfig(): Promise<SparkeeConfig> {
-  const config = await jsonfile.readFile(SPARK_JSON) as SparkeeConfig
+  const config = (await jsonfile.readFile(SPARK_JSON)) as SparkeeConfig
   return config
 }
 
 export async function getPackageJson(packageJsonPath?: string): Promise<PackageJson> {
-  const pkg = await jsonfile.readFile(packageJsonPath ? join(packageJsonPath, 'package.json') : ROOT_PACKAGE) as PackageJson
+  const pkg = (await jsonfile.readFile(
+    packageJsonPath ? join(packageJsonPath, 'package.json') : ROOT_PACKAGE
+  )) as PackageJson
   return pkg
 }

@@ -1,0 +1,15 @@
+{
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.organizeImports.rome": true
+	},
+	"[javascript][javascriptreact][typescript][typescriptreact]": {
+		"editor.defaultFormatter": "rome.rome"
+	},
+	"[json][jsonc][markdown]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	"[css][scss][less]": {
+		"editor.defaultFormatter": "vscode.css-language-features"
+	}
+}
