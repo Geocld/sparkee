@@ -1,14 +1,14 @@
-import { join } from 'path'
-import { promisify } from 'util'
+import { PNPM_WORKSPACE, ROOT, ROOT_PACKAGE, SPARK_JSON } from '../common/constans'
+import type { PackageJson, PnpmWorkspace, SparkeeConfig, WorkspacePackages } from '../types'
+import chalk from 'chalk'
+import consola from 'consola'
 import fs from 'fs-extra'
 import globStandard from 'glob'
-import shell from 'shelljs'
-import consola from 'consola'
-import chalk from 'chalk'
 import jsonfile from 'jsonfile'
+import { join } from 'path'
 import readYamlFile from 'read-yaml-file'
-import { ROOT, SPARK_JSON, ROOT_PACKAGE, PNPM_WORKSPACE } from '../common/constans'
-import type { PackageJson, PnpmWorkspace, SparkeeConfig, WorkspacePackages } from '../types'
+import shell from 'shelljs'
+import { promisify } from 'util'
 
 const glob = promisify(globStandard)
 
@@ -68,6 +68,13 @@ export function formatStdout(stdout: string): string {
 // Get all workspace packages
 export async function getWorkspacePackages(): Promise<PackageJson[]> {
   const folders: string[] = await getWorkspaceFolders()
+
+  // If no workspace folder is found, cause of missing configuration, return root package.json
+  if (!folders.length) {
+    const pkg = await getPackageJson()
+    return [pkg]
+  }
+
   const pkgs = await Promise.all(
     folders.map(async (folder) => {
       if (!(await fs.lstat(folder)).isDirectory()) return null

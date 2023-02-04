@@ -26,6 +26,7 @@ export interface PackageJson {
   version?: string
   scripts?: ScriptsMap
   dependencies?: DependencyMap
+  license?: string
 }
 
 export interface WorkspacePackage extends PackageJson {

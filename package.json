@@ -9,7 +9,9 @@
     "fmt": "rome format src --write",
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc",
-    "pub": "node dist/index.js publish"
+    "pub": "node dist/index.js publish",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "bin": {
     "sparkee": "dist/index.js",
@@ -19,10 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/Geocld/sparkee"
   },
-  "keywords": [
-    "monorepo",
-    "pnpm"
-  ],
+  "keywords": ["monorepo", "pnpm"],
   "license": "MIT",
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
@@ -32,7 +31,8 @@
     "@types/shelljs": "^0.8.11",
     "@types/yargs": "^17.0.10",
     "rome": "^11.0.0",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "vitest": "^0.28.4"
   },
   "dependencies": {
     "chalk": "^4.1.2",
