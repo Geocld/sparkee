@@ -1,73 +1,13 @@
-import type { PackageJson, WorkspacePackage, WorkspacePackageWithoutPkg } from './../types'
-import fs from 'fs'
 import consola from 'consola'
 import chalk from 'chalk'
 import semver from 'semver'
 import live from 'shelljs-live'
-import conventionalChangelog from 'conventional-changelog'
+import { generateChangeLog } from '../utils/changelog'
 import { ROOT } from '../common/constans'
 import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
 import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, getSparkeeConfig } from '../utils'
 
 // publish package, you can publish all or publish single package.
-
-async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = false) {
-  const { name, path } = pkg
-  const { logPresetTypes } = await getSparkeeConfig()
-
-  if (logPresetTypes && !Array.isArray(logPresetTypes)) {
-    console.error(
-      chalk.red(
-        `${chalk.white('[logPresetTypes]')} must be Array, you can refer to ${chalk.green(
-          'https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md'
-        )}.`
-      )
-    )
-    process.exit(1)
-  }
-  return new Promise((resolve, reject) => {
-    // https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-core/README.md
-    const changelogStream = conventionalChangelog(
-      {
-        // preset: 'angular', // use https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-angular/README.md
-        // custom presets: https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md
-        preset: {
-          name: 'conventionalcommits',
-          types: logPresetTypes || [
-            { type: 'feat', section: 'Features' },
-            { type: 'fix', section: 'Bugfixes' },
-            { type: 'perf', section: 'Performance' },
-            { type: 'refactor', section: 'Refactoring' },
-            { type: 'test', section: 'Testing' },
-            { type: 'docs', section: 'Documentation' },
-            { type: 'build', hidden: true },
-            { type: 'style', hidden: true },
-          ],
-        },
-        pkg: {
-          path, // The location of your "package.json".
-        },
-        lernaPackage: name,
-      },
-      undefined,
-      {
-        // commit-path
-        path,
-      },
-      undefined,
-      undefined
-    ).on('error', (err: Error) => {
-      consola.error(err)
-      process.exit(1)
-    })
-
-    const outStream = fs.createWriteStream(`${path}/CHANGELOG.md`, singleRepo ? undefined : { flags: 'a' })
-    changelogStream.pipe(outStream)
-
-    outStream.on('finish', resolve)
-  })
-}
-
 async function publish(force: boolean = false, noPublish: boolean = false) {
   const { logCommit } = await getSparkeeConfig()
 
@@ -161,19 +101,20 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
   await updateVersions(pkgWithVersions)
 
   if (singleRepo) {
+    const { version: newVersion } = pkgWithVersions[0]
+
     step('\nGenerating changelogs...')
     await generateChangeLog(
       {
         name: changedPackages[0].name,
         path: ROOT,
+        version: newVersion
       },
       singleRepo
     )
 
     step('\nBuilding package...')
     live([moduleManager, 'run', 'build'])
-
-    const { version: newVersion } = pkgWithVersions[0]
 
     step('\nCommitting changes...')
     live(['git', 'add', '.'])
@@ -213,7 +154,6 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
       consola.log(` -> ${name} (${path})`)
       filter += ` --filter ${name}`
 
-      // await exec(`npx conventional-changelog -p angular --commit-path ${path} -l ${name} -o ${path}/CHANGELOG.md`)
       await generateChangeLog(pkg)
     }
 

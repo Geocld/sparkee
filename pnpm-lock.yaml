@@ -10,7 +10,9 @@ specifiers:
   chalk: ^4.1.2
   consola: ^2.15.3
   conventional-changelog: ^3.1.25
+  dayjs: ^1.11.7
   fs-extra: ^10.1.0
+  git-cliff: ^1.1.2
   glob: ^8.0.3
   inquirer: ^8.2.4
   jsonfile: ^6.1.0
@@ -28,7 +30,9 @@ dependencies:
   chalk: 4.1.2
   consola: 2.15.3
   conventional-changelog: 3.1.25
+  dayjs: 1.11.7
   fs-extra: 10.1.0
+  git-cliff: 1.1.2
   glob: 8.0.3
   inquirer: 8.2.4
   jsonfile: 6.1.0
@@ -838,6 +842,10 @@ packages:
     resolution: {integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==}
     dev: false
 
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
+    dev: false
+
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
     engines: {node: '>=6.0'}
@@ -1019,6 +1027,66 @@ packages:
       hosted-git-info: 4.1.0
       through2: 2.0.5
       yargs: 16.2.0
+    dev: false
+
+  /git-cliff-darwin-arm64/1.1.2:
+    resolution: {integrity: sha512-z+pSh6vLrtgoILlWzhisLHiLOuStabJh/ShgbBq0q3JRedUmxfg6WqCi+fHymMkA4AeoXOIS7GGfyV5m+sLQeQ==}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /git-cliff-darwin-x64/1.1.2:
+    resolution: {integrity: sha512-dhizA8pGobcxxTS2YQDSs960zFqKfjprDsX/pq+MqgEc68e60B2WSRwFWXd+jK2x/7d7PbnMzlXDqszeDwBpRQ==}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /git-cliff-linux-arm64/1.1.2:
+    resolution: {integrity: sha512-4TYzQHO8H8FquSxoO/O2IfYN6ZLef4SM5PEDG93jeK958s+/FWnFok8evGSJdoTeyu2MXWdw4J40o1AKl0fcxw==}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /git-cliff-linux-x64/1.1.2:
+    resolution: {integrity: sha512-vDLQEITUPHliKVWD69baH1djdsCPpSgUqqbNdX5Xb4bzM8vugIwfpV0XE/BIDC05VUJY2TPLMK1Zh//pdaOhfg==}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /git-cliff-windows-arm64/1.1.2:
+    resolution: {integrity: sha512-wl1S3IU5ewZ6UYzPFZbTZjeyf6/3VIAjDQ0hFWN+LQeo6ttj5RtVzifMRadoCmb2Jgi9RT8qR4plwyL+/NtHlQ==}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /git-cliff-windows-x64/1.1.2:
+    resolution: {integrity: sha512-KszFq4Pre+TdJiPuGP+4t1DtXHcVaF9/dBSmwldxWvyAomzeX2wHalquh2iv6YgcFUQ4oe/DP1qiNhLa5xw5/Q==}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /git-cliff/1.1.2:
+    resolution: {integrity: sha512-sjIhRW8BZSKkr0e9XcEFdxz2SF7lcOOJJuEEc+b07H7zM7WdhLh5dzZM2Et57adC5jUVO6mLpxuWRJSinGl4nQ==}
+    hasBin: true
+    optionalDependencies:
+      git-cliff-darwin-arm64: 1.1.2
+      git-cliff-darwin-x64: 1.1.2
+      git-cliff-linux-arm64: 1.1.2
+      git-cliff-linux-x64: 1.1.2
+      git-cliff-windows-arm64: 1.1.2
+      git-cliff-windows-x64: 1.1.2
     dev: false
 
   /git-raw-commits/2.0.11:

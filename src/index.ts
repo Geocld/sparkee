@@ -3,6 +3,7 @@
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 import init from './core/init'
+import initCliff from './core/init-cliff'
 import run from './core/run'
 import publish from './core/publish'
 import info from './core/info'
@@ -15,9 +16,13 @@ yargs(hideBin(process.argv))
     'init',
     'Create a new monorepo or upgrade an existing repo to monorepo.',
     () => {},
-    (argv) => {
-      init()
-    }
+    () => init()
+  )
+  .command(
+    'init-cliff',
+    'Gererate config file of CHANGELOG.md.',
+    () => {},
+    () => initCliff()
   )
   .command(
     'info',
