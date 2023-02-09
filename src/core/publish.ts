@@ -14,10 +14,10 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
   const { stdout: beforeChanges } = await exec('git diff')
   const { stdout: beforeUntrackedFile } = await exec('git ls-files --others --exclude-standard')
 
-  // if (beforeChanges || beforeUntrackedFile) {
-  //   consola.warn('Please commit your change before publish.')
-  //   exit()
-  // }
+  if (beforeChanges || beforeUntrackedFile) {
+    consola.warn('Please commit your change before publish.')
+    exit()
+  }
 
   const changedPackages = await getChangedPackages(force)
   if (!changedPackages.length) {
@@ -157,58 +157,58 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
       await generateChangeLog(pkg)
     }
 
-    // if (!noPublish) {
-    //   step('\nBuilding all packages...')
-    //   live(`pnpm${filter} build`) // use live to preserve colors of stdout
-    // }
+    if (!noPublish) {
+      step('\nBuilding all packages...')
+      live(`pnpm${filter} build`) // use live to preserve colors of stdout
+    }
 
-    // const { stdout: hasChanges } = await exec('git diff')
-    // const { stdout: untrackedFile } = await exec('git ls-files --others --exclude-standard')
-    // const commitType = logCommit ? logCommit.type : 'release'
-    // const commitTag = logCommit ? logCommit.commitTag : ''
+    const { stdout: hasChanges } = await exec('git diff')
+    const { stdout: untrackedFile } = await exec('git ls-files --others --exclude-standard')
+    const commitType = logCommit ? logCommit.type : 'release'
+    const commitTag = logCommit ? logCommit.commitTag : ''
 
-    // if (hasChanges || untrackedFile) {
-    //   step('\nCommitting changes...')
-    //   live(['git', 'add', '*/*/CHANGELOG.md', '*/*/package.json'])
-    //   const commitCode = live([
-    //     'git',
-    //     'commit',
-    //     '-m',
-    //     `${commitType}: ${commitTag} ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`,
-    //   ])
-    //   if (commitCode !== 0) {
-    //     exit()
-    //   }
-    // } else {
-    //   consola.warn(chalk.yellow('No changes to commit.'))
-    // }
+    if (hasChanges || untrackedFile) {
+      step('\nCommitting changes...')
+      live(['git', 'add', '*/*/CHANGELOG.md', '*/*/package.json'])
+      const commitCode = live([
+        'git',
+        'commit',
+        '-m',
+        `${commitType}: ${commitTag} ${pkgWithVersions.map(({ name, version }) => `${name}@${version}`).join(' ')}`,
+      ])
+      if (commitCode !== 0) {
+        exit()
+      }
+    } else {
+      consola.warn(chalk.yellow('No changes to commit.'))
+    }
 
-    // step('\nCreating tags...')
-    // let versionsToPush: string[] = []
-    // for (const pkg of pkgWithVersions) {
-    //   const { name, version } = pkg
-    //   versionsToPush.push(`refs/tags/${name}@${version}`)
-    //   const tagCode = live(['git', 'tag', `${name}@${version}`])
-    //   if (tagCode !== 0) {
-    //     exit()
-    //   }
-    // }
+    step('\nCreating tags...')
+    let versionsToPush: string[] = []
+    for (const pkg of pkgWithVersions) {
+      const { name, version } = pkg
+      versionsToPush.push(`refs/tags/${name}@${version}`)
+      const tagCode = live(['git', 'tag', `${name}@${version}`])
+      if (tagCode !== 0) {
+        exit()
+      }
+    }
 
-    // step('\nPushing to Git...')
-    // const pushCode = live(['git', 'push', 'origin', ...versionsToPush])
+    step('\nPushing to Git...')
+    const pushCode = live(['git', 'push', 'origin', ...versionsToPush])
 
-    // if (pushCode !== 0) {
-    //   exit()
-    // }
+    if (pushCode !== 0) {
+      exit()
+    }
 
-    // // no publish option, you can set this option in pipeline
-    // if (noPublish) {
-    //   return
-    // }
+    // no publish option, you can set this option in pipeline
+    if (noPublish) {
+      return
+    }
 
-    // // TODO: rollback if publish fail
-    // step('Publishing packages...')
-    // live(`pnpm${filter} publish`)
+    // TODO: rollback if publish fail
+    step('Publishing packages...')
+    live(`pnpm${filter} publish`)
   }
 }
 
