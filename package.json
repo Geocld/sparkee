@@ -1,6 +1,6 @@
 {
   "name": "sparkee",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "A publish tool for monorepo,just like lerna but support pnpm.",
   "author": "lijiahao <lijiahao5372@gmail.com>",
   "main": "dist/index.js",
@@ -43,7 +43,7 @@
     "conventional-changelog": "^3.1.25",
     "dayjs": "^1.11.7",
     "fs-extra": "^10.1.0",
-    "git-cliff": "^1.1.2",
+    "git-cliff": "1.1.2",
     "glob": "^8.0.3",
     "inquirer": "^8.2.4",
     "jsonfile": "^6.1.0",
@@ -53,5 +53,13 @@
     "shelljs": "^0.8.5",
     "shelljs-live": "^0.0.5",
     "yargs": "^17.5.1"
+  },
+  "optionalDependencies": {
+    "git-cliff-linux-x64": "1.1.2",
+    "git-cliff-linux-arm64": "1.1.2",
+    "git-cliff-darwin-x64": "1.1.2",
+    "git-cliff-darwin-arm64": "1.1.2",
+    "git-cliff-windows-x64": "1.1.2",
+    "git-cliff-windows-arm64": "1.1.2"
   }
 }

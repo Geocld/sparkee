@@ -1,18 +1,25 @@
 import fs from 'fs'
 import { join } from 'path'
-import shell from 'shelljs'
+import { spawnSync } from "child_process"
 import consola from 'consola'
 import chalk from 'chalk'
 import dayjs from 'dayjs'
 import { LOCAL_CLIFF_TOML, DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML } from '../common/constans'
 import type { WorkspacePackageWithoutPkg } from './../types'
 
-function execCommand(args: Array<string|undefined>, message?: string) {
-  const { code, stderr } = shell.exec(args.join(' '), { silent: true })
-  if (code !== 0) {
-    consola.error(stderr)
-  } else {
-    message && consola.success(chalk.green(message))
+function getExePath() {
+  const arch = process.arch;
+  let os = process.platform as string;
+  let extension = '';
+  if (['win32', 'cygwin'].includes(process.platform)) {
+    os = 'windows';
+    extension = '.exe';
+  }
+
+  try {
+    return require.resolve(`git-cliff-${os}-${arch}/bin/git-cliff${extension}`)
+  } catch (e) {
+    throw new Error(`Couldn't find git-cliff binary inside node_modules for ${os}-${arch}`)
   }
 }
 
@@ -26,19 +33,17 @@ export function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = 
   }
 
   const changelogFile = singleRepo ? './CHANGELOG.md' : join(path, './CHANGELOG.md')
-  
-  let execChangeLogCommand = [
-    'npx', 
-    'git-cliff', 
-    '--config', 
-    cliffToml, 
-    '-o', 
+
+  let commandArgs = [
+    '--config',
+    cliffToml,
+    '-o',
     changelogFile
   ]
 
   if (!singleRepo) {
     // TODO: custom template in monorepo
-    execChangeLogCommand = execChangeLogCommand.concat([
+    commandArgs = commandArgs.concat([
       '--include-path',
       `"${path}/**"`,
       '--body', // Sets the template for the changelog body
@@ -58,12 +63,20 @@ export function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = 
     ])
   }
 
-  execCommand(execChangeLogCommand, 'Generate CHANGELOG.md successful.')
+  const processResult = spawnSync(getExePath(), commandArgs, { stdio: "inherit" })
+
+  if (processResult.status === 0) {
+    consola.success(chalk.green('Generate CHANGELOG.md successful.'))
+  }
 
   // Replace [unreleased] in singleRepo CHANGELOG.md
   if (singleRepo) {
-    let logContent = fs.readFileSync(changelogFile, 'utf-8')
-    logContent = logContent.replace('[unreleased]', `[${version}] - ${dayjs().format('YYYY-MM-DD')}`)
-    fs.writeFileSync(changelogFile, logContent)
+    try {
+      let logContent = fs.readFileSync(changelogFile, 'utf-8')
+      logContent = logContent.replace('[unreleased]', `[${version}] - ${dayjs().format('YYYY-MM-DD')}`)
+      fs.writeFileSync(changelogFile, logContent)
+    } catch (e) {
+      consola.error(chalk.red(e))
+    }
   }
 }
