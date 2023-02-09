@@ -1,25 +1,31 @@
 import consola from 'consola'
 import chalk from 'chalk'
-import jsonfile from 'jsonfile'
-import { SPARK_JSON, ROOT_PACKAGE } from '../common/constans'
-import { getChangedPackages } from '../utils'
+import { exit, getChangedPackages, getPackageJson, getSparkeeConfig } from '../utils'
+import type { WorkspacePackages } from '../types'
 
 enum Position {
   First,
   Normal,
-  Last
+  Last,
 }
 
-function printer(message: string) {
+function printer(message: string): void {
   console.log(message)
 }
 
-function resolveDepsTree(packages) {
-  let pkgMap = new Map()
-  let versionMap = new Map()
-  packages.forEach(pkg => {
-    const { name, version, dependencies } = pkg.pkg
-    const _deps = new Set()
+function resolveDepsTree(packages: WorkspacePackages): void {
+  const pkgMap = new Map<string, Set<string>>()
+  const versionMap = new Map<string, string | undefined>()
+
+  packages.forEach(({ pkg }) => {
+    if (!pkg) {
+      consola.error('Packages can not be empty!')
+      return exit()
+    }
+
+    const { name, version, dependencies } = pkg
+    const _deps = new Set<string>()
+
     versionMap.set(name, version)
 
     for (const depName in dependencies) {
@@ -30,17 +36,24 @@ function resolveDepsTree(packages) {
     pkgMap.set(name, _deps)
   })
 
-  pkgMap.forEach((dep, key, pmap) => {
+  pkgMap.forEach((_dep, key, pmap) => {
     draw(key, '', Position.First, pmap, versionMap)
 
     printer('\n----------\n')
   })
 }
 
-function draw(dependency, prefix, state, pmap, versionMap) {  
+function draw(
+  dependency: string,
+  prefix: string,
+  state: Position,
+  pmap: Map<string, Set<string>>,
+  versionMap: Map<string, string | undefined>
+) {
   const dependencies = pmap.get(dependency)
-  const nameChar = dependencies.size > 0 ? '┬' : '─'
-  let selfPrefix = prefix + (state === Position.Last ? '╰─' : '├─') + nameChar + ' '
+  const nameChar = dependencies && dependencies.size > 0 ? '┬' : '─'
+
+  let selfPrefix = `${prefix}${state === Position.Last ? '╰─' : '├─'}${nameChar} `
   let childPrefix = prefix + (state === Position.Last ? '  ' : '│ ')
 
   if (state === Position.First) {
@@ -50,21 +63,18 @@ function draw(dependency, prefix, state, pmap, versionMap) {
 
   printer(`${selfPrefix}${dependency}@${versionMap.get(dependency)}`)
 
-  dependencies.forEach((dep, k, deps) => {
-    draw(dep, childPrefix, pmap.get(k).size > 0 ? Position.Normal : Position.Last, pmap, versionMap)
+  dependencies?.forEach((dep, k, _deps) => {
+    draw(dep, childPrefix, pmap.get(k)!.size > 0 ? Position.Normal : Position.Last, pmap, versionMap)
   })
 }
 
 // view current versions of packages
-async function info(tree: boolean = false) {
-  const sparkConfig = await jsonfile.readFile(SPARK_JSON)
-  const { singleRepo } = sparkConfig
+async function info(tree: boolean = false): Promise<void> {
+  const { singleRepo } = await getSparkeeConfig()
+
   if (singleRepo) {
-    const { name, version } = await jsonfile.readFile(ROOT_PACKAGE)
-    consola.log(
-      chalk.bold(
-    `Current package: ${chalk.green(name)} ${chalk.yellow.bold('v' + version)}`)
-    )
+    const { name, version } = await getPackageJson()
+    consola.log(chalk.bold(`Current package: ${chalk.green(name)} ${chalk.yellow.bold(`v${version}`)}`))
     return
   }
 
@@ -74,11 +84,11 @@ async function info(tree: boolean = false) {
   } else {
     consola.log(
       chalk.bold(
-    `Current monorepo packages:\n${
-      packages.map(
-        ({ name, version }) =>
-          `  · ${chalk.green(name)}: ${chalk.yellow.bold('v' + version)}`
-      ).join('\n')}`))
+        `Current monorepo packages:\n${packages
+          .map(({ name, version }) => `  · ${chalk.green(name)}: ${chalk.yellow.bold(`v${version}`)}`)
+          .join('\n')}`
+      )
+    )
   }
 }
 
