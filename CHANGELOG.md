@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2023-02-10
+
+### Bug Fixes
+
+- Info pmap.get(k) is undefined ([1e571d8]( https://github.com/Geocld/sparkee/commit/1e571d8e1fa424cc5988b6b7604f384b241f3caf ))
+- Changelog template incorrect in monorepo ([0dfb97c]( https://github.com/Geocld/sparkee/commit/0dfb97c04f611b8bbae39cb7312e5cbfb2aa2bc0 ))
+
 ## [1.2.0] - 2023-02-10
 
 ### Bug Fixes
@@ -31,6 +38,7 @@ All notable changes to this project will be documented in this file.
 ### Release
 
 - 1.1.4 ([fe38c0d]( https://github.com/Geocld/sparkee/commit/fe38c0d820368216fa679c595672c43e442a6fbc ))
+- 1.2.0 ([111eb68]( https://github.com/Geocld/sparkee/commit/111eb68a9d2d6473f529715b3da39abde554c6be ))
 
 ## [1.1.3] - 2022-11-21
 
