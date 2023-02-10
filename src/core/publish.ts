@@ -108,7 +108,7 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
       {
         name: changedPackages[0].name,
         path: ROOT,
-        version: newVersion
+        version: newVersion,
       },
       singleRepo
     )

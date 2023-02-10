@@ -13,4 +13,10 @@ export const ROOT_PACKAGE = pathResolve('package.json')
 export const PNPM_WORKSPACE = pathResolve('pnpm-workspace.yaml')
 export const LOCAL_CLIFF_TOML = pathResolve(CLIFF_TOML_NAME)
 export const DEFAULT_MONOREPO_CLIFF_TOML = path.join(__dirname, '..', '..', 'template', 'sparkee-cliff-monorepo.toml')
-export const DEFAULT_SINGLEREPO_CLIFF_TOML = path.join(__dirname, '..', '..', 'template', 'sparkee-cliff-singlerepo.toml')
+export const DEFAULT_SINGLEREPO_CLIFF_TOML = path.join(
+  __dirname,
+  '..',
+  '..',
+  'template',
+  'sparkee-cliff-singlerepo.toml'
+)

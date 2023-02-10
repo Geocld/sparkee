@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { join } from 'path'
-import { spawnSync } from "child_process"
+import { spawnSync } from 'child_process'
 import consola from 'consola'
 import chalk from 'chalk'
 import dayjs from 'dayjs'
@@ -8,12 +8,12 @@ import { LOCAL_CLIFF_TOML, DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF
 import type { WorkspacePackageWithoutPkg } from './../types'
 
 function getExePath() {
-  const arch = process.arch;
-  let os = process.platform as string;
-  let extension = '';
+  const arch = process.arch
+  let os = process.platform as string
+  let extension = ''
   if (['win32', 'cygwin'].includes(process.platform)) {
-    os = 'windows';
-    extension = '.exe';
+    os = 'windows'
+    extension = '.exe'
   }
 
   try {
@@ -34,12 +34,7 @@ export function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = 
 
   const changelogFile = singleRepo ? './CHANGELOG.md' : join(path, './CHANGELOG.md')
 
-  let commandArgs = [
-    '--config',
-    cliffToml,
-    '-o',
-    changelogFile
-  ]
+  let commandArgs = ['--config', cliffToml, '-o', changelogFile]
 
   if (!singleRepo) {
     // TODO: custom template in monorepo
@@ -59,11 +54,11 @@ export function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = 
           {% for commit in commits %}
               - {% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message | upper_first }} {% if commit.id %}([{{ commit.id | truncate(length=7, end=\\"\\") }}]({{ commit.id }})){% endif %}\
           {% endfor %}
-      {% endfor %}\n"""`
+      {% endfor %}\n"""`,
     ])
   }
 
-  const processResult = spawnSync(getExePath(), commandArgs, { stdio: "inherit" })
+  const processResult = spawnSync(getExePath(), commandArgs, { stdio: 'inherit' })
 
   if (processResult.status === 0) {
     consola.success(chalk.green('Generate CHANGELOG.md successful.'))
