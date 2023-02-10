@@ -40,21 +40,21 @@ export function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = 
     // TODO: custom template in monorepo
     commandArgs = commandArgs.concat([
       '--include-path',
-      `"${path}/**"`,
+      `${path}/**`,
       '--body', // Sets the template for the changelog body
-      `"""{% if version %}
-        {% if version is matching(\\"^${name}.*\\") %}
-          ## [{{ version }}] - {{ timestamp | date(format=\\"%Y-%m-%d\\") }}
+      `{% if version %}
+        {% if version is matching("^${name}.*") %}
+          ## [{{ version }}] - {{ timestamp | date(format="%Y-%m-%d") }}
         {% endif %}
       {% else %}\
 ## [${name}@${version}] - ${dayjs().format('YYYY-MM-DD')} \n
       {% endif %}\
-      {% for group, commits in commits | group_by(attribute=\\"group\\") %}
+      {% for group, commits in commits | group_by(attribute="group") %}
           ### {{ group | upper_first }}
           {% for commit in commits %}
-              - {% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message | upper_first }} {% if commit.id %}([{{ commit.id | truncate(length=7, end=\\"\\") }}]({{ commit.id }})){% endif %}\
+              - {% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message | upper_first }} {% if commit.id %}([{{ commit.id | truncate(length=7, end="") }}]({{ commit.id }})){% endif %}\
           {% endfor %}
-      {% endfor %}\n"""`,
+      {% endfor %}\n`,
     ])
   }
 
