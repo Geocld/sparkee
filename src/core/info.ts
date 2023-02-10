@@ -65,7 +65,7 @@ function draw(
   printer(`${selfPrefix}${dependency}@${versionMap.get(dependency)}`)
 
   dependencies?.forEach((dep, k, _deps) => {
-    draw(dep, childPrefix, pmap.get(k)!.size > 0 ? Position.Normal : Position.Last, pmap, versionMap)
+    draw(dep, childPrefix, pmap.get(k) && pmap.get(k)!.size > 0 ? Position.Normal : Position.Last, pmap, versionMap)
   })
 }
 
