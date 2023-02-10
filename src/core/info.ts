@@ -51,6 +51,7 @@ function draw(
   versionMap: Map<string, string | undefined>
 ) {
   const dependencies = pmap.get(dependency)
+  if (!dependencies) return
   const nameChar = dependencies && dependencies.size > 0 ? '┬' : '─'
 
   let selfPrefix = `${prefix}${state === Position.Last ? '╰─' : '├─'}${nameChar} `
