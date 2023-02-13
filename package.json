@@ -40,7 +40,6 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "consola": "^2.15.3",
-    "conventional-changelog": "^3.1.25",
     "dayjs": "^1.11.7",
     "fs-extra": "^10.1.0",
     "git-cliff": "1.1.2",
@@ -55,11 +54,11 @@
     "yargs": "^17.5.1"
   },
   "optionalDependencies": {
-    "git-cliff-linux-x64": "1.1.2",
-    "git-cliff-linux-arm64": "1.1.2",
-    "git-cliff-darwin-x64": "1.1.2",
     "git-cliff-darwin-arm64": "1.1.2",
-    "git-cliff-windows-x64": "1.1.2",
-    "git-cliff-windows-arm64": "1.1.2"
+    "git-cliff-darwin-x64": "1.1.2",
+    "git-cliff-linux-arm64": "1.1.2",
+    "git-cliff-linux-x64": "1.1.2",
+    "git-cliff-windows-arm64": "1.1.2",
+    "git-cliff-windows-x64": "1.1.2"
   }
 }
