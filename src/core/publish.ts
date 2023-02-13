@@ -1,11 +1,11 @@
-import consola from 'consola'
+import { ROOT } from '../common/constans'
+import { promptCheckbox, promptConfirm, promptInput, promptSelect } from '../common/prompt'
+import { exec, exit, getChangedPackages, getSparkeeConfig, runTaskSync, step, updateVersions } from '../utils'
+import { generateChangeLog } from '../utils/changelog'
 import chalk from 'chalk'
+import consola from 'consola'
 import semver from 'semver'
 import live from 'shelljs-live'
-import { generateChangeLog } from '../utils/changelog'
-import { ROOT } from '../common/constans'
-import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
-import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, getSparkeeConfig } from '../utils'
 
 // publish package, you can publish all or publish single package.
 async function publish(force: boolean = false, noPublish: boolean = false) {
@@ -49,7 +49,10 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
   const pkgWithVersions = await runTaskSync(
     packagesToRelease.map(({ name, path, pkg }) =>
       async () => {
-        if (!pkg) return
+        if (!pkg) {
+          consola.error('Packages can not be empty!')
+          return exit()
+        }
 
         let { version } = pkg
 
