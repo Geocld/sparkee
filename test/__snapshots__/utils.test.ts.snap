@@ -25,8 +25,9 @@ exports[`utils test > should load singlerepo root package.json file 1`] = `
     "dependencies": {
       "chalk": "^4.1.2",
       "consola": "^2.15.3",
-      "conventional-changelog": "^3.1.25",
+      "dayjs": "^1.11.7",
       "fs-extra": "^10.1.0",
+      "git-cliff": "1.1.2",
       "glob": "^8.0.3",
       "inquirer": "^8.2.4",
       "jsonfile": "^6.1.0",
@@ -56,6 +57,14 @@ exports[`utils test > should load singlerepo root package.json file 1`] = `
     "license": "MIT",
     "main": "dist/index.js",
     "name": "sparkee",
+    "optionalDependencies": {
+      "git-cliff-darwin-arm64": "1.1.2",
+      "git-cliff-darwin-x64": "1.1.2",
+      "git-cliff-linux-arm64": "1.1.2",
+      "git-cliff-linux-x64": "1.1.2",
+      "git-cliff-windows-arm64": "1.1.2",
+      "git-cliff-windows-x64": "1.1.2",
+    },
     "repository": {
       "type": "git",
       "url": "git+https://github.com/Geocld/sparkee",
@@ -69,7 +78,7 @@ exports[`utils test > should load singlerepo root package.json file 1`] = `
       "pub": "node dist/index.js publish",
       "test": "vitest",
     },
-    "version": "1.1.2",
+    "version": "1.2.0",
   },
 ]
 `;
