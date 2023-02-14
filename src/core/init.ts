@@ -1,9 +1,9 @@
-import fs from 'fs-extra'
-import consola from 'consola'
-import jsonfile from 'jsonfile'
 import { SPARK_JSON } from '../common/constans'
-import { promptConfirm, promptCheckbox, promptSelect } from '../common/prompt'
-import { getPkgsProperty, exit } from '../utils'
+import { promptCheckbox, promptConfirm, promptSelect } from '../common/prompt'
+import { exit, getPkgsProperty } from '../utils'
+import consola from 'consola'
+import fs from 'fs-extra'
+import jsonfile from 'jsonfile'
 
 enum RepoType {
   SINGLEREPO = 'singleRepo',

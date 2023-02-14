@@ -1,11 +1,13 @@
-import consola from 'consola'
+import { ROOT } from '../common/constans'
+import { promptCheckbox, promptConfirm, promptInput, promptSelect } from '../common/prompt'
+import { exec, exit, getChangedPackages, getSparkeeConfig, runTaskSync, step, updateVersions } from '../utils'
+import { generateChangeLog } from '../utils/changelog'
+import type { PackageJson, WorkspacePackages } from './../types/index'
 import chalk from 'chalk'
+import consola from 'consola'
+import type { ListChoiceOptions } from 'inquirer'
 import semver from 'semver'
 import live from 'shelljs-live'
-import { generateChangeLog } from '../utils/changelog'
-import { ROOT } from '../common/constans'
-import { promptCheckbox, promptSelect, promptInput, promptConfirm } from '../common/prompt'
-import { exec, exit, step, getChangedPackages, runTaskSync, updateVersions, getSparkeeConfig } from '../utils'
 
 // publish package, you can publish all or publish single package.
 async function publish(force: boolean = false, noPublish: boolean = false) {
@@ -46,25 +48,33 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
 
   consola.log(`Ready to release ${packagesToRelease.map(({ name }) => chalk.bold.white(name)).join(', ')}`)
 
-  const pkgWithVersions = await runTaskSync(
+  const pkgWithVersions = (await runTaskSync(
     packagesToRelease.map(({ name, path, pkg }) =>
       async () => {
-        if (!pkg) return
+        if (!pkg) {
+          consola.error('Packages can not be empty!')
+          return exit()
+        }
 
         let { version } = pkg
 
+        if (!version) {
+          consola.error('Missing package version!')
+          return exit()
+        }
+
         const prerelease = semver.prerelease(version)
-        const preId = prerelease?.[0]
+        const preId = prerelease?.[0] as string
 
         const versionIncrements = [
           'patch',
           'minor',
           'major',
           ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : []),
-        ]
+        ] as semver.ReleaseType[]
 
         const choices = versionIncrements
-          .map((i) => `${i}: ${name} (${semver.inc(version, i, preId)})`)
+          .map((i) => `${i}: ${name} (${semver.inc(version as string, i, preId)})`)
           .concat(['custom'])
 
         const release = await promptSelect(`Select release type for ${chalk.bold.green(name)}`, {
@@ -79,13 +89,13 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
         }
 
         if (!semver.valid(version)) {
-          consola.error(`invalid target version: ${version}`)
+          consola.error(`Invalid target version: ${version}`)
           exit()
         }
 
-        return { name, path, version, pkg }
+        return { name, path, version, pkg } as PackageJson
       })
-  )
+  )) as WorkspacePackages
 
   const isReleaseConfirmed = await promptConfirm(
     `Releasing \n${pkgWithVersions
@@ -104,7 +114,7 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     const { version: newVersion } = pkgWithVersions[0]
 
     step('\nGenerating changelogs...')
-    await generateChangeLog(
+    generateChangeLog(
       {
         name: changedPackages[0].name,
         path: ROOT,
@@ -154,7 +164,7 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
       consola.log(` -> ${name} (${path})`)
       filter += ` --filter ${name}`
 
-      await generateChangeLog(pkg)
+      generateChangeLog(pkg)
     }
 
     if (!noPublish) {

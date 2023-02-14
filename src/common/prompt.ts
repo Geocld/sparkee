@@ -1,5 +1,5 @@
-import inquirer, { ListChoiceOptions } from 'inquirer'
 import consola from 'consola'
+import inquirer, { ListChoiceOptions } from 'inquirer'
 
 export async function promptConfirm(message: string): Promise<boolean> {
   consola.pause()
@@ -22,7 +22,7 @@ export async function promptConfirm(message: string): Promise<boolean> {
 
 export async function promptSelect(
   message: string,
-  { choices } = {} as { choices: ListChoiceOptions[] }
+  { choices } = {} as { choices: (string | ListChoiceOptions)[] }
 ): Promise<string> {
   consola.pause()
   const answers = await inquirer.prompt([
@@ -40,7 +40,7 @@ export async function promptSelect(
 
 export async function promptCheckbox(
   message: string,
-  { choices } = {} as { choices: ListChoiceOptions[] }
+  { choices } = {} as { choices: (string | ListChoiceOptions)[] }
 ): Promise<string[]> {
   consola.pause()
   const answers = await inquirer.prompt([
