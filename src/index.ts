@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs/yargs'
-import { hideBin } from 'yargs/helpers'
+import info from './core/info'
 import init from './core/init'
 import initCliff from './core/init-cliff'
-import run from './core/run'
 import publish from './core/publish'
-import info from './core/info'
+import run from './core/run'
+import { hideBin } from 'yargs/helpers'
+import yargs from 'yargs/yargs'
 
 type Option = boolean | undefined
 

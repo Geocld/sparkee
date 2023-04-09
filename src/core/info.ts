@@ -1,7 +1,7 @@
-import consola from 'consola'
-import chalk from 'chalk'
-import { exit, getChangedPackages, getPackageJson, getSparkeeConfig } from '../utils'
 import type { WorkspacePackages } from '../types'
+import { exit, getChangedPackages, getPackageJson, getSparkeeConfig } from '../utils'
+import chalk from 'chalk'
+import consola from 'consola'
 
 enum Position {
   First,

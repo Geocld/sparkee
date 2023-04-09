@@ -1,8 +1,8 @@
-import fs from 'fs-extra'
-import consola from 'consola'
-import chalk from 'chalk'
+import { DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML, LOCAL_CLIFF_TOML, ROOT } from '../common/constans'
 import { getSparkeeConfig } from '../utils'
-import { ROOT, LOCAL_CLIFF_TOML, DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML } from '../common/constans'
+import chalk from 'chalk'
+import consola from 'consola'
+import fs from 'fs-extra'
 
 async function initCliff() {
   const { singleRepo } = await getSparkeeConfig()
