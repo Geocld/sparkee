@@ -1,4 +1,4 @@
-import { DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML, LOCAL_CLIFF_TOML, ROOT } from '../common/constans'
+import { DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML, LOCAL_CLIFF_TOML } from '../common/constans'
 import { getSparkeeConfig } from '../utils'
 import chalk from 'chalk'
 import consola from 'consola'
