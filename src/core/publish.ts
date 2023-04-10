@@ -5,7 +5,6 @@ import { generateChangeLog } from '../utils/changelog'
 import type { PackageJson, WorkspacePackages } from './../types/index'
 import chalk from 'chalk'
 import consola from 'consola'
-import type { ListChoiceOptions } from 'inquirer'
 import semver from 'semver'
 import live from 'shelljs-live'
 

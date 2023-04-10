@@ -1,8 +1,8 @@
-import consola from 'consola'
-import live from 'shelljs-live'
-import { exit, getPackageJson, getSparkeeConfig, getWorkspacePackages } from '../utils'
 import { promptSelect } from '../common/prompt'
 import type { ScriptsMap, WorkspacePackages } from '../types'
+import { exit, getPackageJson, getSparkeeConfig, getWorkspacePackages } from '../utils'
+import consola from 'consola'
+import live from 'shelljs-live'
 
 // Run the script of package
 async function run() {

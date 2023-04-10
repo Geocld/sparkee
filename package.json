@@ -5,7 +5,7 @@
   "author": "lijiahao <lijiahao5372@gmail.com>",
   "main": "dist/index.js",
   "scripts": {
-    "lint": "rome check src",
+    "lint": "rome check --apply-unsafe src",
     "fmt": "rome format src --write",
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc",
@@ -21,23 +21,20 @@
     "type": "git",
     "url": "git+https://github.com/Geocld/sparkee"
   },
-  "keywords": [
-    "monorepo",
-    "pnpm"
-  ],
+  "keywords": ["monorepo", "pnpm"],
   "license": "MIT",
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "@types/glob": "^8.0.1",
     "@types/inquirer": "^9.0.3",
     "@types/jsonfile": "^6.1.1",
-    "@types/node": "^17.0.43",
+    "@types/node": "^18.15.11",
     "@types/semver": "^7.3.13",
     "@types/shelljs": "^0.8.11",
-    "@types/yargs": "^17.0.10",
-    "rome": "^11.0.0",
-    "typescript": "^4.9.4",
-    "vitest": "^0.28.4"
+    "@types/yargs": "^17.0.24",
+    "rome": "^12.0.0",
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.0"
   },
   "dependencies": {
     "chalk": "^4.1.2",
@@ -49,11 +46,11 @@
     "inquirer": "^8.2.4",
     "jsonfile": "^6.1.0",
     "read-yaml-file": "^2.1.0",
-    "rimraf": "^3.0.2",
-    "semver": "^7.3.7",
+    "rimraf": "^4.4.1",
+    "semver": "^7.3.8",
     "shelljs": "^0.8.5",
     "shelljs-live": "^0.0.5",
-    "yargs": "^17.5.1"
+    "yargs": "^17.7.1"
   },
   "optionalDependencies": {
     "git-cliff-darwin-arm64": "1.1.2",

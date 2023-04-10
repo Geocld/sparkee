@@ -1,15 +1,28 @@
 {
-	"editor.formatOnSave": true,
-	"editor.codeActionsOnSave": {
-		"source.organizeImports.rome": true
-	},
-	"[javascript][javascriptreact][typescript][typescriptreact]": {
-		"editor.defaultFormatter": "rome.rome"
-	},
-	"[json][jsonc][markdown]": {
-		"editor.defaultFormatter": "vscode.json-language-features"
-	},
-	"[css][scss][less]": {
-		"editor.defaultFormatter": "vscode.css-language-features"
-	}
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.rome": true
+  },
+  "files.insertFinalNewline": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "rome.rome"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "rome.rome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "rome.rome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "rome.rome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "rome.rome"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[css][scss][less]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  }
 }
