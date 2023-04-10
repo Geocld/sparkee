@@ -8,6 +8,7 @@ describe('utils test', async () => {
     const sparkeeConfig = await getSparkeeConfig()
 
     expect(sparkeeConfig).toEqual({
+      $schema: './template/schema.json',
       singleRepo: true,
       moduleManager: 'npm',
     })

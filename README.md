@@ -226,6 +226,23 @@ If you want to use custom `commit types` to format changelog, you can config `lo
 ```
 > More configurations refer: [conventional-changelog-config-spec](https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md)
 
+#### JSON $schema
+
+Since version `1.2.2`, a JSON schema file for the `spark.json` is published.
+
+You can specify a relative path to the schema of the Sparkee npm package if Sparkee is installed in the `node_modules` folder:
+
+```json
+{
+  "$schema": "./node_modules/sparkee/template/schema.json",
+  "moduleManager": "pnpm",
+  "packages": [
+    "./docs",
+    "./packages/**",
+  ]
+}
+```
+
 ## License
 
 MIT © Geocld
