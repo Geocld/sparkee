@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2023-04-12
+
+### Bug Fixes
+
+- Info pmap.get(k) is undefined ([1e571d8]( https://github.com/Geocld/sparkee/commit/1e571d8e1fa424cc5988b6b7604f384b241f3caf ))
+- Changelog template incorrect in monorepo ([0dfb97c]( https://github.com/Geocld/sparkee/commit/0dfb97c04f611b8bbae39cb7312e5cbfb2aa2bc0 ))
+- Remove conventional-changelog dep ([f11151f]( https://github.com/Geocld/sparkee/commit/f11151f86a78ec5d6767499cd2d864596b672acd ))
+- Remove .prettierrc in favour of rome ([6e17dee]( https://github.com/Geocld/sparkee/commit/6e17dee0497dfba71b11336577002dff6c3197fe ))
+- Update test snapshots ([c73347f]( https://github.com/Geocld/sparkee/commit/c73347f419e1daa8ebf4439883356fc00ef42a38 ))
+- Add missing @types/semver ([3ee3df0]( https://github.com/Geocld/sparkee/commit/3ee3df09aa438d9154de5f64de4d0f54b39a83b6 ))
+- Improve return error ([9ff5a8e]( https://github.com/Geocld/sparkee/commit/9ff5a8e6a0a6db125ad0b8086d3a449a82094d6c ))
+- Improve missing types for semver related functions ([de7617f]( https://github.com/Geocld/sparkee/commit/de7617f49ab6aba9f380dc78431fd3de903e8c05 ))
+- Replace test snapshots with imports ([64b84c4]( https://github.com/Geocld/sparkee/commit/64b84c4005e04be254f0d23b93fd5658d3da042f ))
+- Add missing @types/inquirer ([a7251f7]( https://github.com/Geocld/sparkee/commit/a7251f704416bc77a57c96c07caf63c9d5400113 ))
+- Improve missing types for inquirer related functions ([91897a5]( https://github.com/Geocld/sparkee/commit/91897a55d9cd1d431829e07d46518501191eb6c1 ))
+- Remove unused root import ([86ac167]( https://github.com/Geocld/sparkee/commit/86ac1676b71cac085a2eb90ba1a73483d1e865c0 ))
+- Remove unused inquirer import ([7365b6b]( https://github.com/Geocld/sparkee/commit/7365b6b32624fb71632570ef24c654d21cf7efd6 ))
+- Add files to .npmignore ([b46fec1]( https://github.com/Geocld/sparkee/commit/b46fec193e0b520dd343e2c6cd6d266e25f79f08 ))
+
+### Features
+
+- Add validation schema.json for spark.json ([c959b5b]( https://github.com/Geocld/sparkee/commit/c959b5b2deab565d94f09263f3dc6d498e97c4a3 ))
+- Add log command ([4a6d758]( https://github.com/Geocld/sparkee/commit/4a6d75862a3a9bfdb271a6048272b0111d136d81 ))
+
+### Build
+
+- Update dependencies ([46cb7a4]( https://github.com/Geocld/sparkee/commit/46cb7a4eefac50fdddfc0510c6fbdfd31187e4a6 ))
+
 ## [1.2.0] - 2023-02-10
 
 ### Bug Fixes
@@ -31,6 +59,7 @@ All notable changes to this project will be documented in this file.
 ### Release
 
 - 1.1.4 ([fe38c0d]( https://github.com/Geocld/sparkee/commit/fe38c0d820368216fa679c595672c43e442a6fbc ))
+- 1.2.0 ([111eb68]( https://github.com/Geocld/sparkee/commit/111eb68a9d2d6473f529715b3da39abde554c6be ))
 
 ## [1.1.3] - 2022-11-21
 
