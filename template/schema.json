@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "A List of packages to manage with Sparkee.",
+      "default": ["./packages"]
+    },
+    "singleRepo": {
+      "type": "boolean",
+      "description": "Whether to enable singleRepo mode.",
+      "default": false
+    },
+    "moduleManager": {
+      "type": "string",
+      "enum": ["npm", "yarn", "pnpm"],
+      "description": "The Prefered package manager.",
+      "default": "npm"
+    },
+    "logPresetTypes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/LogPreset"
+      },
+      "description": "Custom changelLog commit message types."
+    },
+    "logCommit": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "commitTag": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "commitTag"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "LogPreset": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "A string used to match `<type>`s used in the Conventional Commits convention."
+        },
+        "scope": {
+          "type": "string",
+          "description": "A string used to match `[optional scope]` used in the Conventional Commits convention."
+        },
+        "section": {
+          "type": "string",
+          "description": "The section where the matched commit `type` will display in the CHANGELOG."
+        },
+        "hidden": {
+          "type": "boolean",
+          "description": "Set to `true` to hide matched commit `type`s in the CHANGELOG."
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    }
+  }
+}
