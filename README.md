@@ -1,16 +1,17 @@
 # sparkee	
-English | [中文文档](http://geocld.github.io/2022/07/04/sparkee/)
 
 Sparkee is a publish tool for `monorepo`,just like lerna but support `pnpm`, also support singleRepo.
 
 ## About
 
 ### What can Sparkee do?
-There are three commands in sparkee: `sparkee init`, `sparkee info` and `sparkee publish`.
+There are six commands in sparkee:
 
 `init` will initialize sparkee workspace.
+`init-cliff` will initialize `git-cliff` config file.
 `run` will run the script of package.
 `info` will show package's info of workspace.
+`log` will only generate `changelog.md`.
 `publish` will publish any updated packages and generate changelog automatically.
 
 ### What diffrences with lerna?
@@ -154,6 +155,13 @@ $ sparkee info --tree
 @geocld/pkg2@1.0.0
 ``` 
 
+#### log(supported in v1.3.0)
+
+```sh
+$ sparkee log
+```
+If you only want to generate a changelog, you can execute the above command.
+
 #### publish
 
 ```bash
@@ -193,42 +201,14 @@ or
 sparkee publish --np
 ```
 
-#### Custom changelLog commit message types
+#### Custom changelLog
 
-`sparkee` use [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog) internally to generate `CHANGELOG.md`,the `commit types` config is :
+`sparkee` use [git-cliff](https://github.com/orhun/git-cliff) internally to generate `CHANGELOG.md`, If you want to use custom changelog, you can run `sparkee init-cliff` to generate a `cliff` config file, refer to the [configuration](https://git-cliff.org/docs/configuration/) items in detail.
 
-```js
-[
-  { type: 'feat', section: 'Features' },
-  { type: 'fix', section: 'Bugfixes' },
-  { type: 'perf', section: 'Performance' },
-  { type: 'refactor', section: 'Refactoring' },
-  { type: 'test', section: 'Testing' },
-  { type: 'docs', section: 'Documentation' },
-  { type: 'build', hidden: true },
-  { type: 'style', hidden: true }
-]
-```
-
-If you want to use custom `commit types` to format changelog, you can config `logPresetTypes` in `spark.json` to override the default config:
-
-```js
-// spark.json
-{
-  "singleRepo": true,
-  "moduleManager": "npm",
-  "logPresetTypes": [
-    { type: "feat", section: "New features" },
-    { type: "fix", section: 'Bug fixes' },
-    { type: "chore", section: 'gregregre...' },
-  ]
-}
-```
-> More configurations refer: [conventional-changelog-config-spec](https://github.com/conventional-changelog/conventional-changelog-config-spec/blob/master/versions/2.2.0/README.md)
 
 #### JSON $schema
 
-Since version `1.2.2`, a JSON schema file for the `spark.json` is published.
+Since version `1.3.0`, a JSON schema file for the `spark.json` is published.
 
 You can specify a relative path to the schema of the Sparkee npm package if Sparkee is installed in the `node_modules` folder:
 

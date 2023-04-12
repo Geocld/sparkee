@@ -3,6 +3,7 @@
 import info from './core/info'
 import init from './core/init'
 import initCliff from './core/init-cliff'
+import log from './core/log'
 import publish from './core/publish'
 import run from './core/run'
 import { hideBin } from 'yargs/helpers'
@@ -41,6 +42,14 @@ yargs(hideBin(process.argv))
     () => {},
     (argv) => {
       run()
+    }
+  )
+  .command(
+    'log',
+    'Only generate changelog.',
+    () => {},
+    (argv) => {
+      log()
     }
   )
   .command(
