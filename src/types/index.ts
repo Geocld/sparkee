@@ -1,3 +1,5 @@
+export type CommandOption = boolean | undefined
+
 export interface SparkeeConfig {
   $schema?: string
   /**
