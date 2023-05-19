@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2023-05-19
+
+### Bug Fixes
+
+- Imports ([b9d427e]( https://github.com/Geocld/sparkee/commit/b9d427e99f4ceb90e871ff650dbd54d8a47c80d2 ))
+- Exclude releases from changelog, fix monorepo ([08dad3a]( https://github.com/Geocld/sparkee/commit/08dad3a89c3d379a5fcbe3561f2662a01c48a41d ))
+- Exclude releases from changelog ([a4693d8]( https://github.com/Geocld/sparkee/commit/a4693d8792cc4906800dfeddc4e6f1ec72790fe7 ))
+- Remove deprecated specs from schema ([767fcae]( https://github.com/Geocld/sparkee/commit/767fcae2c8b7be31312d3958a4a865ccf350076d ))
+
+### Refactor
+
+- Each command its own module ([348dc50]( https://github.com/Geocld/sparkee/commit/348dc50ba17dede3c06e07bbebc204bee4d8df6c ))
+
 ## [1.3.0] - 2023-04-12
 
 ### Bug Fixes
@@ -56,20 +69,11 @@ All notable changes to this project will be documented in this file.
 - Add git-cliff ([581ad1b]( https://github.com/Geocld/sparkee/commit/581ad1b839cab095d3cb257155e094bd5bb231ca ))
 - Run git-cliff in monorepo ([3886f7b]( https://github.com/Geocld/sparkee/commit/3886f7bb2d84ff83c299c45aa855e8bba2b27ede ))
 
-### Release
-
-- 1.1.4 ([fe38c0d]( https://github.com/Geocld/sparkee/commit/fe38c0d820368216fa679c595672c43e442a6fbc ))
-- 1.2.0 ([111eb68]( https://github.com/Geocld/sparkee/commit/111eb68a9d2d6473f529715b3da39abde554c6be ))
-
 ## [1.1.3] - 2022-11-21
 
 ### Features
 
 - Custom changelog commit type and tag ([0e4e2ea]( https://github.com/Geocld/sparkee/commit/0e4e2eaab9c04264e00856ce26f9c64592d42684 ))
-
-### Release
-
-- 1.1.3 ([05ee7a9]( https://github.com/Geocld/sparkee/commit/05ee7a948fad97ed0010bed86e3012edfd4c8c48 ))
 
 ## [1.1.2] - 2022-11-21
 
@@ -77,19 +81,11 @@ All notable changes to this project will be documented in this file.
 
 - Support packages from pnpm-workspace ([64d6626]( https://github.com/Geocld/sparkee/commit/64d6626b67f09341c104307d9b8f45632aaba031 ))
 
-### Release
-
-- 1.1.2 ([29e41a5]( https://github.com/Geocld/sparkee/commit/29e41a5e4062bd7e516157c21a5e27be6ee02246 ))
-
 ## [1.1.1] - 2022-09-09
 
 ### Bug Fixes
 
 - Pnpm run command in monorepo ([b64420b]( https://github.com/Geocld/sparkee/commit/b64420bc9d20c4b6249ca92e836d92f7b9280e44 ))
-
-### Release
-
-- 1.1.1 ([de2496f]( https://github.com/Geocld/sparkee/commit/de2496f9e455c48a7a67a86c97cb2d8641da2921 ))
 
 ## [1.1.0] - 2022-09-09
 
@@ -98,19 +94,11 @@ All notable changes to this project will be documented in this file.
 - Add noPublish option to adaptive pipeline workflow ([61b9d6d]( https://github.com/Geocld/sparkee/commit/61b9d6db1421dbc8d34e60e76a4f4532c318671e ))
 - Run command to run sctipt ([2b5c35b]( https://github.com/Geocld/sparkee/commit/2b5c35b8a327f78ed9043fff050e0592f4a7f9eb ))
 
-### Release
-
-- 1.1.0 ([caacf78]( https://github.com/Geocld/sparkee/commit/caacf78b1e28b40845e9308798155628fe22e712 ))
-
 ## [1.0.8] - 2022-08-23
 
 ### Refactor
 
 - Changelog FixBug -> Bugfix ([a858f80]( https://github.com/Geocld/sparkee/commit/a858f801844a446d39f529e3b5e1771b8eefff39 ))
-
-### Release
-
-- 1.0.8 ([dc315e1]( https://github.com/Geocld/sparkee/commit/dc315e1746aa537fc8e1b59dd8acb712d1574fc4 ))
 
 ## [1.0.7] - 2022-08-12
 
@@ -118,19 +106,11 @@ All notable changes to this project will be documented in this file.
 
 - Changelog is incorrect in single repo ([5b41ec3]( https://github.com/Geocld/sparkee/commit/5b41ec3e048c97d350bb992f3aba97021f140831 ))
 
-### Release
-
-- 1.0.7 ([cf10a67]( https://github.com/Geocld/sparkee/commit/cf10a67ec3e195f46d0e792e1cc5abdbe15f5208 ))
-
 ## [1.0.6] - 2022-08-12
 
 ### Bug Fixes
 
 - Release commit message ([b91f432]( https://github.com/Geocld/sparkee/commit/b91f432845c5c9dec4a52ef3f882740b26c5765b ))
-
-### Release
-
-- 1.0.6 ([8e51f25]( https://github.com/Geocld/sparkee/commit/8e51f25ba3e9c5897985439adec61231682cf41f ))
 
 ## [1.0.5] - 2022-08-12
 
@@ -138,20 +118,11 @@ All notable changes to this project will be documented in this file.
 
 - Support traditional single repo ([d24f6eb]( https://github.com/Geocld/sparkee/commit/d24f6ebb286aa7b6f41685f92ea46851bad54216 ))
 
-### Release
-
-- 1.0.5)} ([6445dca]( https://github.com/Geocld/sparkee/commit/6445dcad3d8e3010be6bb64024f61b0b5dd8644a ))
-
 ## [1.0.4] - 2022-08-10
 
 ### Bug Fixes
 
 - Publish fail because of untracked file ([d970651]( https://github.com/Geocld/sparkee/commit/d9706512110f81e0f19bc931d1f8462d6bf48a87 ))
-
-### Release
-
-- 1.0.3 ([53e5602]( https://github.com/Geocld/sparkee/commit/53e560278b8e05d453fbcdeab074577f8ebfd8e7 ))
-- 1.0.4 ([7354def]( https://github.com/Geocld/sparkee/commit/7354def79606746f5af0e20103f7d2524dfc7e41 ))
 
 ## [1.0.2] - 2022-07-11
 
@@ -163,29 +134,17 @@ All notable changes to this project will be documented in this file.
 
 - Add chinese doc and workflow ([3952a08]( https://github.com/Geocld/sparkee/commit/3952a08fa5af650715ac33c71714631bc61b2a5e ))
 
-### Release
-
-- 1.0.2 ([4209370]( https://github.com/Geocld/sparkee/commit/4209370001444c69678e9640ea1bc3860165d205 ))
-
 ## [1.0.1] - 2022-07-01
 
 ### Bug Fixes
 
 - ChangeLog version issues ([be89c2d]( https://github.com/Geocld/sparkee/commit/be89c2d104c6d903fdf6adedb67c8cbfcd7a236f ))
 
-### Release
-
-- 1.0.1 ([65d1eb2]( https://github.com/Geocld/sparkee/commit/65d1eb29da8dde9b87ef59ea74852a4501f4429c ))
-
 ## [1.0.0] - 2022-06-24
 
 ### Bug Fixes
 
 - Init path and changelog generate ([41f0bb8]( https://github.com/Geocld/sparkee/commit/41f0bb8498287445457f30ad586e15efd2858789 ))
-
-### Release
-
-- 1.0.0 ([28a5e5c]( https://github.com/Geocld/sparkee/commit/28a5e5c422083a4bcddcf2dbcee6fc64595e8ebb ))
 
 ## [1.0.0-beta] - 2022-06-24
 
