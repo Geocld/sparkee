@@ -217,8 +217,8 @@ You can specify a relative path to the schema of the Sparkee npm package if Spar
   "$schema": "./node_modules/sparkee/template/schema.json",
   "moduleManager": "pnpm",
   "packages": [
-    "./docs",
-    "./packages/**",
+    "@example/docs",
+    "@example/cli",
   ]
 }
 ```
