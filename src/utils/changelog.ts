@@ -42,7 +42,7 @@ export async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleR
 
     const repoMatcher = /^(?:git@|https:\/\/)github.com[:\/](.*).git$/gm
 
-    const gitCommitUrl = `https://github.com/${getFirstRegexGroup(repoMatcher, repoUrl).toString()}/commit/`
+    const gitUrl = `https://github.com/${getFirstRegexGroup(repoMatcher, repoUrl).toString()}`
 
     // TODO: custom template in monorepo
     commandArgs = commandArgs.concat([
@@ -51,15 +51,15 @@ export async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleR
       '--body', // Sets the template for the changelog body
       `{% if version %}
         {% if version is matching("^${name}.*") %}
-          ## [{{ version }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+          ## [{{ version }}](${gitUrl}/releases/tag/{{ version }}) - {{ timestamp | date(format="%Y-%m-%d") }}
         {% endif %}
       {% else %}\
-## [${name}@${version}] - ${dayjs().format('YYYY-MM-DD')} \n
+## [${name}@${version}](${gitUrl}/releases/tag/${name}@${version}) - ${dayjs().format('YYYY-MM-DD')} \n
       {% endif %}\
       {% for group, commits in commits | group_by(attribute="group") %}
           ### {{ group | upper_first }}
           {% for commit in commits %}
-              - {% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message | upper_first }} {% if commit.id %}([{{ commit.id | truncate(length=7, end="") }}](${gitCommitUrl}{{ commit.id }})){% endif %}\
+              - {% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message | upper_first }} {% if commit.id %}([{{ commit.id | truncate(length=7, end="") }}](${gitUrl}/commit/{{ commit.id }})){% endif %}\
           {% endfor %}
       {% endfor %}\n`,
     ])
