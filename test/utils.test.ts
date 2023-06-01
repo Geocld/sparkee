@@ -10,7 +10,7 @@ describe('utils test', async () => {
     expect(sparkeeConfig).toEqual({
       $schema: './template/schema.json',
       singleRepo: true,
-      moduleManager: 'npm',
+      moduleManager: 'pnpm',
     })
   })
 
