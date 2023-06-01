@@ -1,4 +1,4 @@
-import log from '../core/log'
+import { log } from '../core'
 import type { CommandModule } from 'yargs'
 
 const LogCommand: CommandModule = {

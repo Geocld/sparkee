@@ -221,4 +221,4 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
   }
 }
 
-export default publish
+export { publish }

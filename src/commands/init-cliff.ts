@@ -1,4 +1,4 @@
-import initCliff from '../core/init-cliff'
+import { initCliff } from '../core'
 import type { CommandModule } from 'yargs'
 
 const InitCliffCommand: CommandModule = {

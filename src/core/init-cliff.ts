@@ -12,4 +12,4 @@ async function initCliff() {
   consola.success(chalk.green(`Generate ${LOCAL_CLIFF_TOML}`))
 }
 
-export default initCliff
+export { initCliff }

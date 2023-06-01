@@ -1,4 +1,4 @@
-import init from '../core/init'
+import { init } from '../core'
 import type { CommandModule } from 'yargs'
 
 const InitCommand: CommandModule = {

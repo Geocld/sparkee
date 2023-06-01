@@ -1,4 +1,4 @@
-import publish from '../core/publish'
+import { publish } from '../core'
 import type { CommandOption } from '../types'
 import type { CommandModule } from 'yargs'
 

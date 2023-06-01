@@ -93,4 +93,4 @@ async function info(tree: boolean = false): Promise<void> {
   }
 }
 
-export default info
+export { info }

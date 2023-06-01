@@ -1,4 +1,4 @@
-import run from '../core/run'
+import { run } from '../core'
 import type { CommandModule } from 'yargs'
 
 const RunCommand: CommandModule = {

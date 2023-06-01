@@ -1,4 +1,4 @@
-import info from '../core/info'
+import { info } from '../core'
 import type { CommandOption } from '../types'
 import type { CommandModule } from 'yargs'
 

@@ -86,4 +86,4 @@ async function init() {
   consola.success('Sparkee init as monorepo successful.')
 }
 
-export default init
+export { init }
