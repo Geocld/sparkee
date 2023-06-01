@@ -1,5 +1,5 @@
 {
   "$schema": "./template/schema.json",
   "singleRepo": true,
-  "moduleManager": "npm"
+  "moduleManager": "pnpm"
 }
