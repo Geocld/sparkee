@@ -12,7 +12,7 @@ async function log() {
   step('Generating changelogs...')
   if (singleRepo) {
     const { name, version } = packages[0]
-    generateChangeLog(
+    await generateChangeLog(
       {
         name,
         path: ROOT,
@@ -34,7 +34,7 @@ async function log() {
     }
 
     for (const pkg of packagesToGenerate) {
-      generateChangeLog(pkg)
+      await generateChangeLog(pkg)
     }
   }
 }

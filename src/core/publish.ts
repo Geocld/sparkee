@@ -113,7 +113,7 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
     const { version: newVersion } = pkgWithVersions[0]
 
     step('\nGenerating changelogs...')
-    generateChangeLog(
+    await generateChangeLog(
       {
         name: changedPackages[0].name,
         path: ROOT,
@@ -163,7 +163,7 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
       consola.log(` -> ${name} (${path})`)
       filter += ` --filter ${name}`
 
-      generateChangeLog(pkg)
+      await generateChangeLog(pkg)
     }
 
     if (!noPublish) {

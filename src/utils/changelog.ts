@@ -1,5 +1,6 @@
 import { DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML, LOCAL_CLIFF_TOML } from '../common/constans'
-import type { WorkspacePackageWithoutPkg } from './../types'
+import type { WorkspacePackageWithoutPkg } from '../types'
+import { exec, getFirstRegexGroup } from './index'
 import chalk from 'chalk'
 import { spawnSync } from 'child_process'
 import consola from 'consola'
@@ -23,7 +24,7 @@ function getExePath() {
   }
 }
 
-export function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = false) {
+export async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = false) {
   // Get local sparkee-cliff.toml otherwise use config inside.
   const { name, path, version } = pkg
   let cliffToml = LOCAL_CLIFF_TOML
@@ -37,6 +38,12 @@ export function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = 
   let commandArgs = ['--config', cliffToml, '-o', changelogFile]
 
   if (!singleRepo) {
+    const { stdout: repoUrl } = await exec('git ls-remote --get-url origin')
+
+    const repoMatcher = /^(?:git@|https:\/\/)github.com[:\/](.*).git$/gm
+
+    const gitCommitUrl = `https://github.com/${getFirstRegexGroup(repoMatcher, repoUrl).toString()}/commit/`
+
     // TODO: custom template in monorepo
     commandArgs = commandArgs.concat([
       '--include-path',
@@ -52,7 +59,7 @@ export function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = 
       {% for group, commits in commits | group_by(attribute="group") %}
           ### {{ group | upper_first }}
           {% for commit in commits %}
-              - {% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message | upper_first }} {% if commit.id %}([{{ commit.id | truncate(length=7, end="") }}]({{ commit.id }})){% endif %}\
+              - {% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message | upper_first }} {% if commit.id %}([{{ commit.id | truncate(length=7, end="") }}](${gitCommitUrl}{{ commit.id }})){% endif %}\
           {% endfor %}
       {% endfor %}\n`,
     ])

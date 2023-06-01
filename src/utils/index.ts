@@ -17,6 +17,10 @@ export function isNotNullOrUndefined<T extends Object>(input: null | undefined |
   return input != null
 }
 
+export function getFirstRegexGroup(regexp: RegExp, url: string) {
+  return Array.from(url.matchAll(regexp), (m) => m[1])
+}
+
 // Get workspace folder, default is 'packages'
 async function getWorkspaceFolders(packages: string[] | string = '*'): Promise<string[]> {
   let folders: string[] = []
