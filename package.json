@@ -21,10 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/Geocld/sparkee"
   },
-  "keywords": [
-    "monorepo",
-    "pnpm"
-  ],
+  "keywords": ["monorepo", "pnpm"],
   "license": "MIT",
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
@@ -35,7 +32,7 @@
     "@types/semver": "^7.3.13",
     "@types/shelljs": "^0.8.11",
     "@types/yargs": "^17.0.24",
-    "rome": "^12.1.1",
+    "rome": "^12.1.3",
     "typescript": "^5.0.4",
     "vitest": "^0.30.0"
   },
