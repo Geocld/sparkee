@@ -1,12 +1,12 @@
 import { DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML, LOCAL_CLIFF_TOML } from '../common/constans'
 import type { WorkspacePackageWithoutPkg } from '../types'
-import { exec, getFirstRegexGroup } from './index'
+import { exec, fileExists, getFirstRegexGroup } from './index'
 import chalk from 'chalk'
 import { spawnSync } from 'child_process'
 import consola from 'consola'
 import dayjs from 'dayjs'
-import fs from 'fs'
-import { join } from 'path'
+import { readFile, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 
 function getExePath() {
   const arch = process.arch
@@ -28,7 +28,7 @@ export async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleR
   // Get local sparkee-cliff.toml otherwise use config inside.
   const { name, path, version } = pkg
   let cliffToml = LOCAL_CLIFF_TOML
-  if (!fs.existsSync(LOCAL_CLIFF_TOML)) {
+  if (!(await fileExists(LOCAL_CLIFF_TOML))) {
     consola.warn('Local sparkee-cliff.toml not found, use default Config.')
     cliffToml = singleRepo ? DEFAULT_SINGLEREPO_CLIFF_TOML : DEFAULT_MONOREPO_CLIFF_TOML
   }
@@ -74,9 +74,9 @@ export async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleR
   // Replace [unreleased] in singleRepo CHANGELOG.md
   if (singleRepo) {
     try {
-      let logContent = fs.readFileSync(changelogFile, 'utf-8')
+      let logContent = await readFile(changelogFile, { encoding: 'utf8' })
       logContent = logContent.replace('[unreleased]', `[${version}] - ${dayjs().format('YYYY-MM-DD')}`)
-      fs.writeFileSync(changelogFile, logContent)
+      await writeFile(changelogFile, logContent, { encoding: 'utf8' })
     } catch (e) {
       consola.error(chalk.red(e))
     }
