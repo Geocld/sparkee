@@ -2,9 +2,9 @@ import { DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML, LOCAL_CLIFF
 import type { WorkspacePackageWithoutPkg } from '../types'
 import { exec, fileExists, getFirstRegexGroup } from './index'
 import chalk from 'chalk'
-import { spawnSync } from 'child_process'
 import consola from 'consola'
 import dayjs from 'dayjs'
+import { spawnSync } from 'node:child_process'
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
@@ -24,7 +24,7 @@ function getExePath() {
   }
 }
 
-export async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = false) {
+async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = false) {
   // Get local sparkee-cliff.toml otherwise use config inside.
   const { name, path, version } = pkg
   let cliffToml = LOCAL_CLIFF_TOML
@@ -82,3 +82,5 @@ export async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleR
     }
   }
 }
+
+export { generateChangeLog }

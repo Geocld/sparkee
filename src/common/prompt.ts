@@ -1,7 +1,7 @@
 import consola from 'consola'
 import inquirer, { ListChoiceOptions } from 'inquirer'
 
-export async function promptConfirm(message: string): Promise<boolean> {
+async function promptConfirm(message: string): Promise<boolean> {
   consola.pause()
   const answers = await inquirer.prompt([
     {
@@ -20,7 +20,7 @@ export async function promptConfirm(message: string): Promise<boolean> {
   return answers.confirm
 }
 
-export async function promptSelect(
+async function promptSelect(
   message: string,
   { choices } = {} as { choices: (string | ListChoiceOptions)[] }
 ): Promise<string> {
@@ -38,7 +38,7 @@ export async function promptSelect(
   return answers.prompt
 }
 
-export async function promptCheckbox(
+async function promptCheckbox(
   message: string,
   { choices } = {} as { choices: (string | ListChoiceOptions)[] }
 ): Promise<string[]> {
@@ -56,7 +56,7 @@ export async function promptCheckbox(
   return answers.prompt
 }
 
-export async function promptInput(message: string, initial: string = ''): Promise<string> {
+async function promptInput(message: string, initial: string = ''): Promise<string> {
   consola.pause()
   const answers = await inquirer.prompt([
     {
@@ -70,3 +70,5 @@ export async function promptInput(message: string, initial: string = ''): Promis
 
   return answers.prompt
 }
+
+export { promptConfirm, promptSelect, promptCheckbox, promptInput }
