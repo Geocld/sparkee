@@ -2,9 +2,20 @@
   "name": "sparkee",
   "version": "1.3.1",
   "description": "A publish tool for monorepo,just like lerna but support pnpm.",
+  "keywords": ["monorepo", "pnpm"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Geocld/sparkee"
+  },
+  "license": "MIT",
   "author": "lijiahao <lijiahao5372@gmail.com>",
   "main": "dist/index.js",
+  "bin": {
+    "sparkee": "dist/index.js",
+    "spk": "dist/index.js"
+  },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "lint": "rome check --apply-unsafe src",
     "fmt": "rome format src --write",
     "dev": "rimraf dist && tsc -w",
@@ -12,29 +23,6 @@
     "pub": "node dist/index.js publish",
     "test": "vitest",
     "coverage": "vitest run --coverage"
-  },
-  "bin": {
-    "sparkee": "dist/index.js",
-    "spk": "dist/index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Geocld/sparkee"
-  },
-  "keywords": ["monorepo", "pnpm"],
-  "license": "MIT",
-  "devDependencies": {
-    "@types/fs-extra": "^11.0.1",
-    "@types/glob": "^8.0.1",
-    "@types/inquirer": "^9.0.3",
-    "@types/jsonfile": "^6.1.1",
-    "@types/node": "^18.15.11",
-    "@types/semver": "^7.3.13",
-    "@types/shelljs": "^0.8.11",
-    "@types/yargs": "^17.0.24",
-    "rome": "^12.1.3",
-    "typescript": "^5.0.4",
-    "vitest": "^0.30.0"
   },
   "dependencies": {
     "chalk": "^4.1.2",
@@ -52,6 +40,19 @@
     "shelljs-live": "^0.0.5",
     "yargs": "^17.7.1"
   },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
+    "@types/glob": "^8.0.1",
+    "@types/inquirer": "^9.0.3",
+    "@types/jsonfile": "^6.1.1",
+    "@types/node": "^18.15.11",
+    "@types/semver": "^7.3.13",
+    "@types/shelljs": "^0.8.11",
+    "@types/yargs": "^17.0.24",
+    "rome": "^12.1.3",
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.0"
+  },
   "optionalDependencies": {
     "git-cliff-darwin-arm64": "1.1.2",
     "git-cliff-darwin-x64": "1.1.2",
@@ -59,5 +60,12 @@
     "git-cliff-linux-x64": "1.1.2",
     "git-cliff-windows-arm64": "1.1.2",
     "git-cliff-windows-x64": "1.1.2"
-  }
+  },
+  "engines": {
+    "node": ">=16.14.0",
+    "npm": "use `pnpm` instead",
+    "pnpm": ">=8.0.0",
+    "yarn": "use `pnpm` instead"
+  },
+  "packageManager": "pnpm@8.6.0"
 }
