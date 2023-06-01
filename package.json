@@ -16,13 +16,14 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "lint": "rome check --apply-unsafe src",
-    "fmt": "rome format src --write",
+    "lint": "rome check --apply-unsafe .",
+    "fmt": "rome format --write .",
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc",
     "pub": "node dist/index.js publish",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "prepare": "husky install"
   },
   "dependencies": {
     "chalk": "^4.1.2",
@@ -49,6 +50,8 @@
     "@types/semver": "^7.3.13",
     "@types/shelljs": "^0.8.11",
     "@types/yargs": "^17.0.24",
+    "husky": "^8.0.0",
+    "nano-staged": "^0.8.0",
     "rome": "^12.1.3",
     "typescript": "^5.0.4",
     "vitest": "^0.30.0"
@@ -66,6 +69,10 @@
     "npm": "use `pnpm` instead",
     "pnpm": ">=8.0.0",
     "yarn": "use `pnpm` instead"
+  },
+  "nano-staged": {
+    "*.ts": "rome check --apply-unsafe .",
+    "*": "rome format --write ."
   },
   "packageManager": "pnpm@8.6.0"
 }
