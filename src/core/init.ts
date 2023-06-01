@@ -1,8 +1,7 @@
 import { SPARK_JSON } from '../common/constans'
 import { promptCheckbox, promptConfirm, promptSelect } from '../common/prompt'
-import { exit, getPkgsProperty } from '../utils'
+import { exit, fileExists, getPkgsProperty } from '../utils'
 import consola from 'consola'
-import fs from 'fs-extra'
 import jsonfile from 'jsonfile'
 
 enum RepoType {
@@ -12,7 +11,7 @@ enum RepoType {
 
 // monorepo init and spark.json init
 async function init() {
-  const isInited = await fs.exists(SPARK_JSON)
+  const isInited = await fileExists(SPARK_JSON)
   if (isInited) {
     const isOverride = await promptConfirm('This project has been initialized, do you need to override spark.json?')
     if (!isOverride) {

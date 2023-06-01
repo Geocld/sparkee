@@ -2,9 +2,9 @@ import { PNPM_WORKSPACE, ROOT, ROOT_PACKAGE, SPARK_JSON } from '../common/consta
 import type { PackageJson, PnpmWorkspace, SparkeeConfig, WorkspacePackages } from '../types'
 import chalk from 'chalk'
 import consola from 'consola'
-import fs from 'fs-extra'
 import globStandard from 'glob'
 import jsonfile from 'jsonfile'
+import { stat, writeFile } from 'node:fs/promises'
 import { join } from 'path'
 import readYamlFile from 'read-yaml-file'
 import shell from 'shelljs'
@@ -21,12 +21,14 @@ export function getFirstRegexGroup(regexp: RegExp, url: string) {
   return Array.from(url.matchAll(regexp), (m) => m[1])
 }
 
+export const fileExists = async (path: string) => !!(await stat(path).catch((_e: unknown) => false))
+
 // Get workspace folder, default is 'packages'
 async function getWorkspaceFolders(packages: string[] | string = '*'): Promise<string[]> {
   let folders: string[] = []
 
   try {
-    const pnpmWorkspace = await readYamlFile<PnpmWorkspace>(fs.readFileSync(PNPM_WORKSPACE, 'utf8'))
+    const pnpmWorkspace = await readYamlFile<PnpmWorkspace>(PNPM_WORKSPACE)
     let wPackages = pnpmWorkspace.packages
 
     wPackages = wPackages.map((wp) => {
@@ -50,7 +52,7 @@ async function getWorkspaceFolders(packages: string[] | string = '*'): Promise<s
   // All packages match the packages of (spark.json -> packages)
   const _folders = await Promise.all(
     folders.map(async (folder) => {
-      if (!(await fs.lstat(folder)).isDirectory()) return null
+      if (!(await stat(folder)).isDirectory()) return null
 
       const pkg = await getPackageJson(folder)
       if (packages.indexOf(pkg.name) === -1) return null
@@ -81,7 +83,7 @@ export async function getWorkspacePackages(): Promise<PackageJson[]> {
 
   const pkgs = await Promise.all(
     folders.map(async (folder) => {
-      if (!(await fs.lstat(folder)).isDirectory()) return null
+      if (!(await stat(folder)).isDirectory()) return null
 
       const pkg = await getPackageJson(folder)
       return pkg
@@ -117,7 +119,7 @@ export async function getChangedPackages(force: boolean = false): Promise<Worksp
   let lastTag: string
 
   // get packages of spark.json
-  if (!fs.existsSync(SPARK_JSON)) {
+  if (!(await fileExists(SPARK_JSON))) {
     consola.error('`spark.json` was not found, please try to run `sparkee init` to init repo.')
     exit()
   }
@@ -178,7 +180,7 @@ export async function getChangedPackages(force: boolean = false): Promise<Worksp
 
 export async function updateVersions(packageList: WorkspacePackages): Promise<void[]> {
   return Promise.all(
-    packageList.map(({ pkg, version, path }) => {
+    packageList.map(async ({ pkg, version, path }) => {
       if (!pkg) {
         consola.error('Packages can not be empty!')
         return exit()
@@ -186,7 +188,8 @@ export async function updateVersions(packageList: WorkspacePackages): Promise<vo
 
       pkg.version = version
       const content = JSON.stringify(pkg, null, 2) + '\n'
-      return fs.writeFile(join(path, 'package.json'), content)
+
+      return await writeFile(join(path, 'package.json'), content, { encoding: 'utf8' })
     })
   )
 }
