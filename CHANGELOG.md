@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2023-06-02
+
+### Bug Fixes
+
+- Run lint & fmt ([1782da2]( https://github.com/Geocld/sparkee/commit/1782da25da52d4a2d20729befe8d601f5ab94ed7 ))
+- Ignore node_modules when fmt & lint ([8a44193]( https://github.com/Geocld/sparkee/commit/8a441932bc5440ed393d4065230b3535e78a9d70 ))
+- Generate commit link in monorepo changelog ([d6e6c4e]( https://github.com/Geocld/sparkee/commit/d6e6c4e33ec71fde3e2b7ce3cb8299b171d93e70 ))
+- Generate version link in monorepo changelog ([698abdc]( https://github.com/Geocld/sparkee/commit/698abdcfb362410b6659e8c1fb36bca8c2ce94fb ))
+- Run fmt & lint ([dcbadae]( https://github.com/Geocld/sparkee/commit/dcbadae8c299d0b8233a5fb49b06b9f8f45a3e9a ))
+- Change pkgmanager to pnpm ([7362efb]( https://github.com/Geocld/sparkee/commit/7362efbe0946c156567dee63288ed2dabba1e509 ))
+- Update pkgmanager in tests ([f83865f]( https://github.com/Geocld/sparkee/commit/f83865f0f0368ca52828a25babf7f17232225d7e ))
+- Fix import path ([82b0fc2]( https://github.com/Geocld/sparkee/commit/82b0fc25895ea28fdac0763b9a9868d4180cfe3b ))
+- Optimize named imports ([8321d8c]( https://github.com/Geocld/sparkee/commit/8321d8c93064b861890d6da7adc586f39e87a442 ))
+- Optimize core named exports ([13cf8ef]( https://github.com/Geocld/sparkee/commit/13cf8ef7d57b9be07991123fb0682277daf96e66 ))
+- Optimize named exports ([13ce09c]( https://github.com/Geocld/sparkee/commit/13ce09ce95d9877c336fd61163d2d99cd10c619e ))
+
+### Documentation
+
+- Fix wrong json schema example ([92b6690]( https://github.com/Geocld/sparkee/commit/92b6690761edded0d39c6129d2f846434fe50b81 ))
+
+### Features
+
+- Add node ci workflow ([7326646]( https://github.com/Geocld/sparkee/commit/732664683dc56e45879b44af23fb95f8c24509d0 ))
+- Restrict pkgmanager to pnpm ([156860c]( https://github.com/Geocld/sparkee/commit/156860cff8188954d432619b3180297f31d2d338 ))
+- Add and configure husky & nano-staged ([1941dc2]( https://github.com/Geocld/sparkee/commit/1941dc2cc39c552f14877616c3fadcc3e24cb648 ))
+
+### Refactor
+
+- Modify pub command ([b588997]( https://github.com/Geocld/sparkee/commit/b5889970e79bce7fffa986aa428abeda1750a8c5 ))
+
 ## [1.3.1] - 2023-05-19
 
 ### Bug Fixes
