@@ -20,7 +20,7 @@
     "fmt": "rome format --write .",
     "dev": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc",
-    "pub": "node dist/index.js publish",
+    "pub": "pnpm build && node dist/index.js publish",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "prepare": "husky install"
