@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.3] - 2023-06-08
+
+### Bug Fixes
+
+- Remove only allow in pnpm ([c795b49]( https://github.com/Geocld/sparkee/commit/c795b49fef9e90df44020ea4217d67771eff9e97 ))
+
 ## [1.3.2] - 2023-06-02
 
 ### Bug Fixes
