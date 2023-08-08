@@ -31,7 +31,7 @@
     "chalk": "^4.1.2",
     "consola": "^2.15.3",
     "dayjs": "^1.11.7",
-    "git-cliff": "1.1.2",
+    "git-cliff": "1.2.0",
     "glob": "^8.0.3",
     "inquirer": "^8.2.4",
     "jsonfile": "^6.1.0",
@@ -57,12 +57,12 @@
     "vitest": "^0.30.0"
   },
   "optionalDependencies": {
-    "git-cliff-darwin-arm64": "1.1.2",
-    "git-cliff-darwin-x64": "1.1.2",
-    "git-cliff-linux-arm64": "1.1.2",
-    "git-cliff-linux-x64": "1.1.2",
-    "git-cliff-windows-arm64": "1.1.2",
-    "git-cliff-windows-x64": "1.1.2"
+    "git-cliff-darwin-arm64": "1.2.0",
+    "git-cliff-darwin-x64": "1.2.0",
+    "git-cliff-linux-arm64": "1.2.0",
+    "git-cliff-linux-x64": "1.2.0",
+    "git-cliff-windows-arm64": "1.2.0",
+    "git-cliff-windows-x64": "1.2.0"
   },
   "engines": {
     "node": ">=16.14.0",

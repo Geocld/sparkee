@@ -43,6 +43,10 @@ async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = f
   }
   let commandArgs = ['--config', cliffToml, outputOpt, changelogFile]
 
+  if (changelogExist) {
+    commandArgs.push('--latest')
+  }
+
   if (!singleRepo) {
     const { stdout: repoUrl } = await exec('git ls-remote --get-url origin')
 
