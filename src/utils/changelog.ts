@@ -35,7 +35,13 @@ async function generateChangeLog(pkg: WorkspacePackageWithoutPkg, singleRepo = f
 
   const changelogFile = singleRepo ? './CHANGELOG.md' : join(path, './CHANGELOG.md')
 
-  let commandArgs = ['--config', cliffToml, '-o', changelogFile]
+  let outputOpt = '--output'
+  const changelogExist = await fileExists(changelogFile)
+  // Prepend new changes to an existing changelog file
+  if (changelogExist) {
+    outputOpt = '--prepend'
+  }
+  let commandArgs = ['--config', cliffToml, outputOpt, changelogFile]
 
   if (!singleRepo) {
     const { stdout: repoUrl } = await exec('git ls-remote --get-url origin')
