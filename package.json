@@ -1,6 +1,6 @@
 {
   "name": "sparkee",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "A publish tool for monorepo,just like lerna but support pnpm.",
   "keywords": [
     "monorepo",
