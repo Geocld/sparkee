@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { InfoCommand, InitCliffCommand, InitCommand, LogCommand, PublishCommand, RunCommand } from './commands'
 import { hideBin } from 'yargs/helpers'
 import yargs from 'yargs/yargs'
+import { InfoCommand, InitCliffCommand, InitCommand, LogCommand, PublishCommand, RunCommand } from './commands'
 
 yargs(hideBin(process.argv))
   .scriptName('sparkee')

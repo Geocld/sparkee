@@ -1,6 +1,6 @@
+import type { CommandModule } from 'yargs'
 import { info } from '../core'
 import type { CommandOption } from '../types'
-import type { CommandModule } from 'yargs'
 
 const InfoCommand: CommandModule = {
   command: 'info',

@@ -1,8 +1,8 @@
+import consola from 'consola'
+import jsonfile from 'jsonfile'
 import { SPARK_JSON } from '../common/constans'
 import { promptCheckbox, promptConfirm, promptSelect } from '../common/prompt'
 import { exit, fileExists, getPkgsProperty } from '../utils'
-import consola from 'consola'
-import jsonfile from 'jsonfile'
 
 enum RepoType {
   SINGLEREPO = 'singleRepo',

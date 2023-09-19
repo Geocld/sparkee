@@ -1,19 +1,19 @@
-import { PNPM_WORKSPACE, ROOT, ROOT_PACKAGE, SPARK_JSON } from '../common/constans'
-import type { PackageJson, PnpmWorkspace, SparkeeConfig, WorkspacePackages } from '../types'
+import { stat, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { promisify } from 'util'
 import chalk from 'chalk'
 import consola from 'consola'
 import globStandard from 'glob'
 import jsonfile from 'jsonfile'
-import { stat, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
 import readYamlFile from 'read-yaml-file'
 import shell from 'shelljs'
-import { promisify } from 'util'
+import { PNPM_WORKSPACE, ROOT, ROOT_PACKAGE, SPARK_JSON } from '../common/constans'
+import type { PackageJson, PnpmWorkspace, SparkeeConfig, WorkspacePackages } from '../types'
 
 const glob = promisify(globStandard)
 
 // https://github.com/microsoft/TypeScript/issues/16069#issuecomment-369374214
-export function isNotNullOrUndefined<T extends Object>(input: null | undefined | T): input is T {
+export function isNotNullOrUndefined<T>(input: null | undefined | T): input is T {
   return input != null
 }
 
@@ -194,6 +194,9 @@ export async function updateVersions(packageList: WorkspacePackages): Promise<vo
   )
 }
 
+type CallbackFunction = () => void
+
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
 export async function runTaskSync(tasks: Function[]): Promise<any[]> {
   for (const task of tasks) {
     if (typeof task !== 'function') {
@@ -201,6 +204,7 @@ export async function runTaskSync(tasks: Function[]): Promise<any[]> {
     }
   }
 
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
   const results: Function[] = []
 
   for (const task of tasks) {

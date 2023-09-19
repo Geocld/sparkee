@@ -1,8 +1,5 @@
 {
-  "$schema": "./node_modules/rome/configuration_schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -24,15 +21,25 @@
     "ignore": ["dist", "node_modules"],
     "rules": {
       "recommended": true,
-      "suspicious": {
-        "noExplicitAny": "off"
+      "a11y": {
+        "useKeyWithClickEvents": "off"
       },
       "correctness": {
         "noVoidTypeReturn": "off"
+      },
+      "nursery": {
+        "useGroupedTypeImport": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off"
       },
       "style": {
         "all": false
       }
     }
+  },
+  "organizeImports": {
+    "enabled": true
   }
 }

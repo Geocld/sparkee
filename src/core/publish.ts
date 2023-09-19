@@ -1,12 +1,12 @@
+import chalk from 'chalk'
+import consola from 'consola'
+import semver from 'semver'
+import live from 'shelljs-live'
 import { ROOT } from '../common/constans'
 import { promptCheckbox, promptConfirm, promptInput, promptSelect } from '../common/prompt'
 import type { PackageJson, WorkspacePackages } from '../types/index'
 import { exec, exit, getChangedPackages, getSparkeeConfig, runTaskSync, step, updateVersions } from '../utils'
 import { generateChangeLog } from '../utils/changelog'
-import chalk from 'chalk'
-import consola from 'consola'
-import semver from 'semver'
-import live from 'shelljs-live'
 
 // publish package, you can publish all or publish single package.
 async function publish(force: boolean = false, noPublish: boolean = false) {

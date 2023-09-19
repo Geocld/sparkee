@@ -1,5 +1,5 @@
-import { getPackageJson, getPkgsProperty, getSparkeeConfig, getWorkspacePackages } from '../src/utils'
 import { describe, expect, it } from 'vitest'
+import { getPackageJson, getPkgsProperty, getSparkeeConfig, getWorkspacePackages } from '../src/utils'
 
 import packageJson from '../package.json'
 

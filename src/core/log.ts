@@ -1,8 +1,8 @@
+import consola from 'consola'
 import { ROOT } from '../common/constans'
 import { promptCheckbox } from '../common/prompt'
 import { exit, getChangedPackages, getSparkeeConfig, step } from '../utils'
 import { generateChangeLog } from '../utils/changelog'
-import consola from 'consola'
 
 async function log() {
   const { singleRepo = false } = await getSparkeeConfig()

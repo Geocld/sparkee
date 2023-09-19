@@ -1,8 +1,8 @@
-import { DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML, LOCAL_CLIFF_TOML } from '../common/constans'
-import { getSparkeeConfig } from '../utils'
+import { readFile, writeFile } from 'node:fs/promises'
 import chalk from 'chalk'
 import consola from 'consola'
-import { readFile, writeFile } from 'node:fs/promises'
+import { DEFAULT_MONOREPO_CLIFF_TOML, DEFAULT_SINGLEREPO_CLIFF_TOML, LOCAL_CLIFF_TOML } from '../common/constans'
+import { getSparkeeConfig } from '../utils'
 
 async function initCliff() {
   const { singleRepo } = await getSparkeeConfig()

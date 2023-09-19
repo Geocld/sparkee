@@ -1,6 +1,6 @@
+import type { CommandModule } from 'yargs'
 import { publish } from '../core'
 import type { CommandOption } from '../types'
-import type { CommandModule } from 'yargs'
 
 const PublishCommand: CommandModule = {
   command: 'publish',
