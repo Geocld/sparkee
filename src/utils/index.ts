@@ -1,5 +1,5 @@
 import { stat, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import path, { join } from 'node:path'
 import { promisify } from 'util'
 import chalk from 'chalk'
 import consola from 'consola'
@@ -29,15 +29,19 @@ async function getWorkspaceFolders(packages: string[] | string = '*'): Promise<s
 
   try {
     const pnpmWorkspace = await readYamlFile<PnpmWorkspace>(PNPM_WORKSPACE)
-    let wPackages = pnpmWorkspace.packages
+    const wPackages = pnpmWorkspace.packages
 
-    wPackages = wPackages.map((wp) => {
-      return `${wp.split('/')[0]}/*`
-    })
+    const matchedPkgs = wPackages
+                          .filter(packagePath => !packagePath.startsWith('!'))
+                          .map(packagePath => packagePath.replace(/\/\*$/, '/*'))
+
+    const ignorePkgs = wPackages
+                          .filter(packagePath => packagePath.startsWith('!'))
+                          .map(packagePath => packagePath.substring(1))
 
     await Promise.all(
-      wPackages.map(async (wp) => {
-        const wFolders = await glob(wp)
+      matchedPkgs.map(async (mp) => {
+        const wFolders = await glob(mp, { ignore: ignorePkgs })
         folders = folders.concat(wFolders)
       })
     )
@@ -84,6 +88,7 @@ export async function getWorkspacePackages(): Promise<PackageJson[]> {
   const pkgs = await Promise.all(
     folders.map(async (folder) => {
       if (!(await stat(folder)).isDirectory()) return null
+      if (!(await stat(join(folder, 'package.json')))) return null
 
       const pkg = await getPackageJson(folder)
       return pkg
@@ -158,6 +163,7 @@ export async function getChangedPackages(force: boolean = false): Promise<Worksp
 
     const pkgs = await Promise.all(
       folders.map(async (folder) => {
+        // Reinforce: folder must have package.json
         const pkg = await getPackageJson(folder)
         const { stdout: hasChanges } = await exec(
           `git diff ${lastTag} -- ${join(folder, 'src')} ${join(folder, 'package.json')}`
@@ -220,8 +226,14 @@ export async function getSparkeeConfig(): Promise<SparkeeConfig> {
 }
 
 export async function getPackageJson(packageJsonPath?: string): Promise<PackageJson> {
-  const pkg = (await jsonfile.readFile(
-    packageJsonPath ? join(packageJsonPath, 'package.json') : ROOT_PACKAGE
-  )) as PackageJson
-  return pkg
+  try {
+    const pkg = (await jsonfile.readFile(
+      packageJsonPath ? join(packageJsonPath, 'package.json') : ROOT_PACKAGE
+    )) as PackageJson
+    return pkg
+  } catch {
+    const emptyPkg: PackageJson = { name: '' }
+    return emptyPkg
+  }
+  
 }
