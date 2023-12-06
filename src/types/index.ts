@@ -77,3 +77,11 @@ export interface ScriptsMap {
 export interface DependencyMap {
   [depName: string]: string
 }
+
+export interface PublishArgs {
+  force: CommandOption
+  noPublish: CommandOption
+  noCheckCommit: CommandOption
+  pkgName: string
+  pkgVersion: string
+}

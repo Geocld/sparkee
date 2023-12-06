@@ -6,6 +6,7 @@ Cargo.lock
 .github
 .eslintrc
 .prettierignore
+.husky
 npm
 rustfmt.toml
 yarn.lock
@@ -15,4 +16,7 @@ renovate.json
 src/
 test/
 vitest.config.ts
-rome.json
+biome.json
+spark.json
+sparkee-cliff.toml
+tsconfig.json

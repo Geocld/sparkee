@@ -4,18 +4,19 @@ import semver from 'semver'
 import live from 'shelljs-live'
 import { ROOT } from '../common/constans'
 import { promptCheckbox, promptConfirm, promptInput, promptSelect } from '../common/prompt'
-import type { PackageJson, WorkspacePackages } from '../types/index'
+import type { PackageJson, PublishArgs, WorkspacePackages } from '../types/index'
 import { exec, exit, getChangedPackages, getSparkeeConfig, runTaskSync, step, updateVersions } from '../utils'
 import { generateChangeLog } from '../utils/changelog'
 
 // publish package, you can publish all or publish single package.
-async function publish(force: boolean = false, noPublish: boolean = false) {
+async function publish(args: PublishArgs) {
+  const { force = false, noPublish = false, noCheckCommit = false, pkgName = '', pkgVersion = '' } = args
   const { logCommit } = await getSparkeeConfig()
 
   const { stdout: beforeChanges } = await exec('git diff')
   const { stdout: beforeUntrackedFile } = await exec('git ls-files --others --exclude-standard')
 
-  if (beforeChanges || beforeUntrackedFile) {
+  if (!noCheckCommit && (beforeChanges || beforeUntrackedFile)) {
     consola.warn('Please commit your change before publish.')
     exit()
   }
@@ -33,9 +34,14 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
   if (singleRepo) {
     pickedPackages = [changedPackages[0].name]
   } else {
-    pickedPackages = await promptCheckbox('What packages do you want to publish?', {
-      choices: changedPackages.map((pkg) => pkg.name),
-    })
+    if (!pkgName && !pkgVersion) {
+      pickedPackages = await promptCheckbox('What packages do you want to publish(Press space key to select)?', {
+        choices: changedPackages.map((pkg) => pkg.name),
+      })
+    } else {
+      // Use package args to skip package pick prompt
+      pickedPackages = [pkgName]
+    }
   }
 
   const packagesToRelease = changedPackages.filter((pkg) => pickedPackages.includes(pkg.name))
@@ -47,60 +53,78 @@ async function publish(force: boolean = false, noPublish: boolean = false) {
 
   consola.log(`Ready to release ${packagesToRelease.map(({ name }) => chalk.bold.white(name)).join(', ')}`)
 
-  const pkgWithVersions = (await runTaskSync(
-    packagesToRelease.map(({ name, path, pkg }) =>
-      async () => {
-        if (!pkg) {
-          consola.error('Packages can not be empty!')
-          return exit()
-        }
-
-        let { version } = pkg
-
-        if (!version) {
-          consola.error('Missing package version!')
-          return exit()
-        }
-
-        const prerelease = semver.prerelease(version)
-        const preId = prerelease?.[0] as string
-
-        const versionIncrements = [
-          'patch',
-          'minor',
-          'major',
-          ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : []),
-        ] as semver.ReleaseType[]
-
-        const choices = versionIncrements
-          .map((i) => `${i}: ${name} (${semver.inc(version as string, i, preId)})`)
-          .concat(['custom'])
-
-        const release = await promptSelect(`Select release type for ${chalk.bold.green(name)}`, {
-          choices,
+  // Use package args to skip package pick prompt
+  let pkgWithVersions: WorkspacePackages = []
+  if (pkgName && pkgVersion) {
+    pkgWithVersions = (await runTaskSync(
+      packagesToRelease.map(({ name, path, pkg }) =>
+        async () => {
+          return { name, path, version: pkgVersion, pkg } as PackageJson
         })
+    )) as WorkspacePackages
+  } else {
+    // Normal prompt
+    pkgWithVersions = (await runTaskSync(
+      packagesToRelease.map(({ name, path, pkg }) =>
+        async () => {
+          if (!pkg) {
+            consola.error('Packages can not be empty!')
+            return exit()
+          }
 
-        if (release === 'custom') {
-          version = await promptInput(`Input custom version (${chalk.bold.green(name)})`)
-        } else {
-          const match = release.match(/\((.*)\)/)
-          version = match ? match[1] : ''
-        }
+          let { version } = pkg
 
-        if (!semver.valid(version)) {
-          consola.error(`Invalid target version: ${version}`)
-          exit()
-        }
+          if (!version) {
+            consola.error('Missing package version!')
+            return exit()
+          }
 
-        return { name, path, version, pkg } as PackageJson
-      })
-  )) as WorkspacePackages
+          const prerelease = semver.prerelease(version)
+          const preId = prerelease?.[0] as string
 
-  const isReleaseConfirmed = await promptConfirm(
-    `Releasing \n${pkgWithVersions
-      .map(({ name, version }) => `  · ${chalk.white(name)}: ${chalk.yellow.bold(`v${version}`)}`)
-      .join('\n')}\nConfirm?`
-  )
+          const versionIncrements = [
+            'patch',
+            'minor',
+            'major',
+            ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : []),
+          ] as semver.ReleaseType[]
+
+          const choices = versionIncrements
+            .map((i) => `${i}: ${name} (${semver.inc(version as string, i, preId)})`)
+            .concat(['custom'])
+
+          const release = await promptSelect(`Select release type for ${chalk.bold.green(name)}`, {
+            choices,
+          })
+
+          if (release === 'custom') {
+            version = await promptInput(`Input custom version (${chalk.bold.green(name)})`)
+          } else {
+            const match = release.match(/\((.*)\)/)
+            version = match ? match[1] : ''
+          }
+
+          if (!semver.valid(version)) {
+            consola.error(`Invalid target version: ${version}`)
+            exit()
+          }
+
+          return { name, path, version, pkg } as PackageJson
+        })
+    )) as WorkspacePackages
+  }
+
+  let isReleaseConfirmed = false
+  // Use package args to skip package pick prompt
+  if (pkgName && pkgVersion) {
+    isReleaseConfirmed = true
+  } else {
+    isReleaseConfirmed = await promptConfirm(
+      `Releasing \n${pkgWithVersions
+        .map(({ name, version }) => `  · ${chalk.white(name)}: ${chalk.yellow.bold(`v${version}`)}`)
+        .join('\n')}\nConfirm?`
+    )
+  }
 
   if (!isReleaseConfirmed) {
     exit()

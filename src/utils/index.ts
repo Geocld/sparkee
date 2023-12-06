@@ -32,12 +32,12 @@ async function getWorkspaceFolders(packages: string[] | string = '*'): Promise<s
     const wPackages = pnpmWorkspace.packages
 
     const matchedPkgs = wPackages
-                          .filter(packagePath => !packagePath.startsWith('!'))
-                          .map(packagePath => packagePath.replace(/\/\*$/, '/*'))
+      .filter((packagePath) => !packagePath.startsWith('!'))
+      .map((packagePath) => packagePath.replace(/\/\*$/, '/*'))
 
     const ignorePkgs = wPackages
-                          .filter(packagePath => packagePath.startsWith('!'))
-                          .map(packagePath => packagePath.substring(1))
+      .filter((packagePath) => packagePath.startsWith('!'))
+      .map((packagePath) => packagePath.substring(1))
 
     await Promise.all(
       matchedPkgs.map(async (mp) => {
@@ -235,5 +235,4 @@ export async function getPackageJson(packageJsonPath?: string): Promise<PackageJ
     const emptyPkg: PackageJson = { name: '' }
     return emptyPkg
   }
-  
 }

@@ -201,6 +201,24 @@ or
 sparkee publish --np
 ```
 
+#### publish --noCommitCheck
+If you want to skip commit check before publish or generate changelog, you can use `--noCommitCheck` or `--ncm`:
+
+```bash
+sparkee publish --noCommitCheck
+
+or
+
+sparkee publish --ncm
+```
+
+#### publish --package <packageName> --ver <packageVersion>
+If you dont want to use prompt when publish(such as in CI/CD autodeploy case), you can use `--package` and `--ver` to specify the name and version of package.For example:
+
+```bash
+sparkee publish --package @geocld/sparkee --ver 1.2.0
+```
+
 #### Custom changelLog
 
 `sparkee` use [git-cliff](https://github.com/orhun/git-cliff) internally to generate `CHANGELOG.md`, If you want to use custom changelog, you can run `sparkee init-cliff` to generate a `cliff` config file, refer to the [configuration](https://git-cliff.org/docs/configuration/) items in detail.
