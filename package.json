@@ -1,8 +1,11 @@
 {
   "name": "sparkee",
-  "version": "1.3.4",
+  "version": "1.4.0",
   "description": "A publish tool for monorepo,just like lerna but support pnpm.",
-  "keywords": ["monorepo", "pnpm"],
+  "keywords": [
+    "monorepo",
+    "pnpm"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Geocld/sparkee"

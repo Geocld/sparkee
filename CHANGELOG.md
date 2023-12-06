@@ -12,6 +12,16 @@ All notable changes to this project will be documented in this file.
 
 - Upgrade git-cliff and add prepend changelog to exist file ([66947b4]( https://github.com/Geocld/sparkee/commit/66947b40c99f23f3f4c2ed2b9876de76b336b604 ))
 
+## [1.3.4] - 2023-08-08
+
+### Bug Fixes
+
+- Changelog overrided old version infos ([ec7bf22]( https://github.com/Geocld/sparkee/commit/ec7bf22fcdeeeec2883f6b0b87d1cab30415180e ))
+
+### Features
+
+- Upgrade git-cliff and add prepend changelog to exist file ([66947b4]( https://github.com/Geocld/sparkee/commit/66947b40c99f23f3f4c2ed2b9876de76b336b604 ))
+
 
 ## [1.3.3] - 2023-06-08
 
